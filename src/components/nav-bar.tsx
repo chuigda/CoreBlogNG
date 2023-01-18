@@ -2,6 +2,7 @@ import { h } from 'tsx-dom'
 
 import './nav-bar.css'
 
+// @ts-ignore
 const NavLink = ({ hashLink, children }) => (
    <div class="nav-item" onClick={() => window.location.hash = hashLink}>
       {children}

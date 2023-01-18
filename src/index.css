@@ -1,5 +1,19 @@
+@font-face {
+    font-family: "iconfont";
+    src: url('resc/iconfont.ttf?t=1674020795789') format('truetype');
+}
+
+.iconfont {
+    font-family: "iconfont" !important;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    user-select: none;
+}
+
 * {
-    font-family: Serif;
+    font-family: serif;
 }
 
 body {
@@ -9,7 +23,7 @@ body {
 #app {
     margin-top: 80px;
     width: 100vw;
-    height: 100%;
+    height: calc(100vh - 90px);
 
     display: flex;
     flex-direction: row;
@@ -20,5 +34,12 @@ body {
     flex-grow: 0;
     flex-shrink: 1;
 
-    flex-basis: 900px;
+    flex-basis: 840px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+a {
+    color: #000;
+    text-decoration: underline;
 }

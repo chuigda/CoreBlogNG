@@ -1,0 +1,37 @@
+#blog-read {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#blog-read > hr {
+    margin-top: 1em;
+    width: 100%
+}
+
+#blog-title {
+    margin: 0;
+    text-align: center
+}
+
+#blog-content {
+    width: 100%;
+    margin: 0;
+
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: auto;
+}
+
+#blog-content.liberal > p:first-child::first-letter {
+    float: left;
+    font-size: 2em;
+    line-height: 0.8em;
+    font-weight: bold;
+    margin-right: 0.1em;
+    margin-top: 0.125em;
+}
+
+#blog-footer {
+    user-select: none;
+}

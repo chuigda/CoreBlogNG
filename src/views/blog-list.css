@@ -1,0 +1,26 @@
+#blog-list {
+    width: 100%;
+    margin-top: 2em;
+
+    display: flex;
+    flex-direction: column;
+    row-gap: 2em;
+
+    overflow: auto;
+}
+
+.blog-item {
+    border: 1px solid black;
+    padding: 1em;
+}
+
+.blog-item > h2 {
+    margin: 0
+}
+
+.blog-item > .brief {
+    margin-top: 1em;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid black;
+}
