@@ -1,0 +1,10 @@
+= CoreBlogNG
+Author: Chuigda WhiteGive
+
+link:https://chuigda.github.io/CoreBlogNG/[个人博客] 的源代码。
+
+== ⚠️⚠️⚠️ 警告：包含申必技术 ⚠️⚠️⚠️
+[quote]
+____
+这个 Blog 的实现方式很申必，各种花里胡哨的东西都有一点，而做成这样基本只是出于个人偏好。这个 Blog 可能完全不适合任何人类使用，也不要尝试读代码学到什么东西 —— 只会学到很多很坏的 practice 而已。
+____
