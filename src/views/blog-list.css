@@ -19,6 +19,11 @@
     margin: 0
 }
 
+.blog-item > h2 > div {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .blog-item > .brief {
     margin-top: 1em;
     padding-bottom: 4px;
