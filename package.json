@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "generate": "node scripts/compile.cjs ./markdown ./data",
+    "cleanup": "rm -rf data && mkdir -p data/blog && mkdir -p data/list",
+    "build": "tsc && vite build && cp fake-jquery.js dist/ && cp -r public dist/ && cp -r data dist/data"
   },
   "devDependencies": {
     "showdown": "^2.1.0",
