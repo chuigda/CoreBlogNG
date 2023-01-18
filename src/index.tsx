@@ -16,7 +16,7 @@ const handleRoute = () => {
 
    app.innerHTML = ''
    console.log(path)
-   if (path.length === 0) {
+   if (path.length === 0 || path[0] === 'liberal') {
       app.appendChild(<BlogList liberal={true} />)
    } else if (path[0] === 'tech') {
       app.appendChild(<BlogList liberal={false} />)

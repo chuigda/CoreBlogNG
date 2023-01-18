@@ -12,7 +12,7 @@ const NavLink = ({ hashLink, children }) => (
 const NavBar = () => {
    return (
       <div class="nav">
-         <NavLink hashLink="/"><span>隨想</span></NavLink>
+         <NavLink hashLink="/liberal"><span>隨想</span></NavLink>
          <NavLink hashLink="/tech"><span>技術</span></NavLink>
          <NavLink hashLink="/about"><span>關於</span></NavLink>
          <NavLink hashLink="/link"><span>友鏈</span></NavLink>
