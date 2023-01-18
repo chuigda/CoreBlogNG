@@ -10,9 +10,10 @@ const { api: { base } } = config
 const BlogList = ({ liberal }) => {
    setTimeout(async () => {
       const blogs = await $().get(`${base}/list/${liberal ? 'liberal' : 'tech'}`)
+      const blogList = $('#blog-list')
       // @ts-ignore
       blogs.forEach(({ title, brief, time, timestamp, ident, author }) => {
-         $('#blog-list').appendChild(
+         blogList.appendChild(
             <div class="blog-item">
                <h2><a href={`/#/blog/${timestamp}-${ident}`}>{title}</a></h2>
                <div class="brief">{brief}</div>

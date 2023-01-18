@@ -32,7 +32,9 @@ const Index = () => {
                   ))
                }
             </div>
-            { description }
+            <div class="about-description">
+               { description }
+            </div>
          </div>
       </div>
    )
