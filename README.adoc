@@ -1,7 +1,7 @@
 = CoreBlogNG
 Author: Chuigda WhiteGive
 
-link:https://chuigda.github.io/CoreBlogNG/[个人博客] 的源代码。
+link:https://chuigda.github.io/CoreBlogNG/[新世纪锤哥博客] 的源代码。
 
 == ⚠️⚠️⚠️ 警告：包含申必技术 ⚠️⚠️⚠️
 [quote]
