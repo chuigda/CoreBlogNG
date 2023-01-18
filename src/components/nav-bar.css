@@ -1,0 +1,49 @@
+.nav::before {
+    content: "";
+    height: 50px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: max(100vw, 2560px);
+
+    clip-path: polygon(0 1%, 100% 0, 100% 70%, 0% 100%);
+    background-color: #cd0000;
+}
+
+.nav > .nav-item {
+    width: 160px;
+    height: 50px;
+
+    position: fixed;
+    top: 15px;
+
+    clip-path: polygon(0 1%, 100% 0, 100% 85%, 0% 100%);
+    background-color: #000000;
+    color: #ffffff;
+    text-align: center;
+
+    cursor: pointer;
+    user-select: none;
+
+    display: flex;
+    justify-content: center;
+}
+
+.nav > .nav-item:hover {
+    background-color: #3f3f3f;
+}
+
+.nav-item > span {
+    margin-top: -4px;
+    font-size: 20pt;
+    font-family: 'FOT-Matisse Pro EB', 'sans-serif';
+}
+
+.nav > .nav-item {
+    --left-margin: max(40px, 0.5 * (100vw - 1024px))
+}
+
+.nav > .nav-item:nth-child(1) { left: var(--left-margin); }
+.nav > .nav-item:nth-child(2) { left: calc(var(--left-margin) + 200px); }
+.nav > .nav-item:nth-child(3) { left: calc(var(--left-margin) + 400px); }
+.nav > .nav-item:nth-child(4) { left: calc(var(--left-margin) + 600px); }

@@ -1,0 +1,38 @@
+.index {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.index-title > h1 {
+    margin: 0;
+    user-select: none;
+}
+
+.index-avatar {
+    width: 180px;
+    height: 180px;
+
+    border-radius: 50%;
+    border: 2px solid white;
+    outline: 2px solid black;
+
+    margin: 1.5em;
+
+    user-select: none;
+}
+
+.index-content {
+    width: 100%;
+}
+
+.index-content::first-letter {
+    /* 首字母下沉 */
+    float: left;
+    font-size: 2em;
+    line-height: 0.8em;
+    font-weight: bold;
+
+    margin-right: 0.1em;
+    margin-top: 0.125em;
+}
