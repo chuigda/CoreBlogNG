@@ -3,6 +3,11 @@
     src: url('../resc/iconfont.ttf?t=1674020795789') format('truetype');
 }
 
+@font-face {
+    font-family: "Noto Serif Black Fallback";
+    src: url('../resc/noto-serif-black-fallback.otf') format('opentype');
+}
+
 .iconfont {
     font-family: "iconfont" !important;
     font-style: normal;
