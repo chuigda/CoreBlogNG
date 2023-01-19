@@ -65,7 +65,7 @@ const loadWGLite = async () => {
    }
 
    const modelPath = [
-      ['wheelMesh', 'extra/project-wg-extra/project-wg-model/wheel.bin'],
+      ['wheelMesh', 'extra/project-wg-model/wheel.bin'],
       ['monitorMesh', 'extra/project-wg-model/monitor.bin'],
       ['monitorIntake', 'extra/project-wg-model/monitor-intake.bin'],
 
