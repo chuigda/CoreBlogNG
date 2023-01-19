@@ -48,4 +48,6 @@
 
 ## 结论
 
+神之眼是 Absolute<sup>(R)</sup> Proprietary<sup>TM</sup> 的专有软件，专有软件都坏坏，打打专有软件！
+
 天理坏坏，打打天理！
