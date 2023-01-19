@@ -1,6 +1,15 @@
-import {h} from "tsx-dom";
+import { h } from 'tsx-dom'
 
 const importDynamic = (path: string) => import(/* @vite-ignore */ path)
+
+const loadImage = (path: string) => {
+   return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.src = path
+      img.onload = () => resolve(img)
+      img.onerror = reject
+   })
+}
 
 const loadWGLite = async () => {
    const { initializeGL, resizeGL, paintGL, initStatus } = await importDynamic('./extra/project-wg-lite.mjs')
@@ -9,7 +18,7 @@ const loadWGLite = async () => {
    body.appendChild(
       <canvas id="project-wg-lite" width="600" height="600">
       </canvas>
-)
+   )
 
    const canvas = $('#project-wg-lite') as HTMLCanvasElement
    const gl = canvas.getContext('webgl')
@@ -54,6 +63,16 @@ const loadWGLite = async () => {
          const floatArray = new Float32Array(arrayBuffer)
          return Array.from(floatArray)
       })
+   }
+
+   const imagePath = [
+      ['staticFace', 'extra/images/static-face.png'],
+      ['wink', 'extra/images/wink.png'],
+   ]
+
+   const images: Record<string, ImageBitmap> = {}
+   for (const [name, path] of imagePath) {
+      images[name] = (await loadImage(path)) as ImageBitmap
    }
 
    initializeGL(gl, model)
