@@ -1,9 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap');
+
 @font-face {
     font-family: "iconfont";
     src: url('../resc/iconfont.ttf?t=1674020795789') format('truetype');
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap');
 
 .iconfont {
     font-family: "iconfont" !important;
