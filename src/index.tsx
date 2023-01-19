@@ -49,8 +49,9 @@ const importDynamic = (path: string) => import(/* @vite-ignore */ path)
 
 const loadWGLite = async () => {
    const { initializeGL, resizeGL, paintGL, initStatus } = await importDynamic('./extra/project-wg-lite.mjs')
+   const body = $('body')
 
-   $('body').appendChild(
+   body.appendChild(
       <canvas id="project-wg-lite" width="600" height="600">
       </canvas>
    )
@@ -119,6 +120,17 @@ const loadWGLite = async () => {
          }
       })
    }
+
+   console.log(body.clientWidth, body.clientHeight)
+   body.addEventListener('mousemove', e => {
+      const { clientWidth, clientHeight } = body
+      const [halfWidth, twoThirdHeight, halfHeight] = [clientWidth / 2, clientHeight * 2 / 3, clientHeight / 2]
+      const { x, y } = e
+
+      statusRef.status.headStatus.rotationX = ((y - twoThirdHeight) / halfHeight) * 30.0
+      statusRef.status.headStatus.rotationY = ((x - halfWidth) / halfWidth) * 15
+      statusRef.status.headStatus.rotationZ = ((x - halfWidth) / halfWidth) * - 10.0
+   })
 
    const main = () => {
       const gl = canvas.getContext('webgl')
