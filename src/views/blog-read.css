@@ -21,6 +21,8 @@
     flex-grow: 1;
     flex-shrink: 1;
     overflow: auto;
+
+    padding-right: 4px;
 }
 
 #blog-content.liberal > p:first-child::first-letter {
@@ -30,6 +32,19 @@
     font-weight: 700;
     margin-right: 0.1em;
     margin-top: 0.125em;
+}
+
+#blog-content > blockquote {
+    background-color: #dfdfdf;
+    margin: 0;
+    padding-left: 2em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    border-left: 4px solid #cccccc;
+}
+
+#blog-content > blockquote > p {
+    margin: 0;
 }
 
 #blog-footer {

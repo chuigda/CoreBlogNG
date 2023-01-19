@@ -18,6 +18,10 @@
     font-family: 'Noto Serif SC', serif;
 }
 
+code {
+    font-family: monospace;
+}
+
 body {
     margin: 0
 }
