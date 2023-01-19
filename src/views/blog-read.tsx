@@ -8,7 +8,7 @@ const { api: { base } } = config
 // @ts-ignore
 const BlogRead = ({ blogId }) => {
    setTimeout(async () => {
-      const { title, html, liberal } = await $().get(`${base}/blog/${blogId}`)
+      const { title, html, liberal } = await $().get<any>(`${base}/blog/${blogId}`)
       $('#blog-read').style.cssText = ''
       $('#blog-title').innerText = title
 

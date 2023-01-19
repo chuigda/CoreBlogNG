@@ -4,4 +4,4 @@ interface FakeJQuery {
 }
 
 declare function $(selector: string): HTMLElement
-declare function $(): any
+declare function $(): FakeJQuery
