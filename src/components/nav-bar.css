@@ -1,5 +1,5 @@
 .nav::before {
-    content: "";
+    content: '';
     height: 50px;
     position: fixed;
     top: 0;
@@ -37,8 +37,8 @@
 .nav-item > span {
     margin-top: -4pt;
     font-size: 20pt;
-    font-family: 'FOT-Matisse Pro EB', 'Noto Serif CJK SC Black', 'Noto Serif Black', 'Noto Serif Black Fallback', 'Noto Serif CJK SC', 'Noto Serif', 'serif';
-    font-weight: bolder;
+    font-family: 'FOT-Matisse Pro EB', 'Noto Serif', serif;
+    font-weight: 900;
 }
 
 .nav > .nav-item {
