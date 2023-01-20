@@ -139,7 +139,7 @@ fs.writeFileSync(`${targetDir}/list/liberal`, JSON.stringify(liberalList))
 
 ## 前端路由
 
-这一步其实比我想的简单 —— 监听一下 url hash 的变化，然后 “挂载” 对应的 DOM 就可以了。具体的代码实现的仍然非常 dirty。
+我不喜欢加载新内容的时候浏览器刷新的样子，真的太难受了，所以我还是弄了个前端路由。这一步其实比我想的简单 —— 监听一下 url hash 的变化，然后 “挂载” 对应的 DOM 就可以了。具体的代码实现的仍然非常 dirty。
 
 ```jsx
 const handleRoute = () => {
