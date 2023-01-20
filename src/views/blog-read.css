@@ -16,6 +16,7 @@
 
 #blog-content {
     width: 100%;
+    max-width: 100%;
     margin: 0;
 
     flex-grow: 1;
@@ -55,4 +56,19 @@
 
 #blog-footer {
     user-select: none;
+}
+
+#blog-content > pre {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+#blog-content > .img-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

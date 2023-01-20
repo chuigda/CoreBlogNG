@@ -51,6 +51,8 @@ body {
     flex-basis: 840px;
     padding-left: 20px;
     padding-right: 20px;
+
+    max-width: calc(100% - 40px);
 }
 
 a {
