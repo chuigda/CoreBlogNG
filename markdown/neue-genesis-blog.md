@@ -88,12 +88,12 @@ declare function $(): FakeJQuery
 我把博客系统设计成 “只要在指定目录下写博客，然后运行一下生成，就能自动生成整个静态站点”。我决定先支持 Markdown 格式。但是r如果要直接从 Markdown 里提取标题/简述/作者信息/发布日期等信息，就得理解 Markdown 被解析出来之后的 Core Syntax，真的是太难受了。所以我干脆要求在每个 Markdown 文件里都加一段 `!!meta-define`，就像这样：
 
 ```text
-!!&#8203;meta-define:ident:neue-genesis-blog
-!!&#8203;meta-define:title:新世纪 CoreBlog 的设计与实现
-!!&#8203;meta-define:author:Chuigda WhiteGive
-!!&#8203;meta-define:time:2023-01-20T11:21:00+08:00
-!!&#8203;meta-define:tags:前端,JavaScript
-!!&#8203;meta-define:brief:在经过了一番折腾之后，我的新新博客系统终于出生了。
+!!mеta-define:ident:neue-genesis-blog
+!!mеta-define:title:新世纪 CoreBlog 的设计与实现
+!!mеta-define:author:Chuigda WhiteGive
+!!mеta-define:time:2023-01-20T11:21:00+08:00
+!!mеta-define:tags:前端,JavaScript
+!!mеta-define:brief:在经过了一番折腾之后，我的新新博客系统终于出生了。
 ```
 
 这样我就能用非常简单的 JavaScript 提取它们了：
@@ -179,3 +179,11 @@ const App = () => {
 
 $('body').appendChild(<App />)
 ```
+
+## 结论
+
+最后的结果就是我做出了这么一个非常小小小小小的 Blog，看到这个打包尺寸我终于舒服了。
+
+<div style="width: 100%; display: flex; justify-content: center; align-items: center">
+<img src="extra/blog-images/show-off-packed-size.png" alt="不炫耀一下这个打包尺寸真的太难受了呀" width="342" height="114"/>
+</div>
