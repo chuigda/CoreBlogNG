@@ -11,17 +11,11 @@
     user-select: none;
 }
 
-.about-avatar {
+.about > .avatar {
     width: 180px;
     height: 180px;
 
-    border-radius: 50%;
-    border: 2px solid white;
-    outline: 2px solid black;
-
     margin: 1.5em;
-
-    user-select: none;
 }
 
 .about-links {

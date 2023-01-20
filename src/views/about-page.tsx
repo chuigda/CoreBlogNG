@@ -18,7 +18,7 @@ const Index = () => {
          <div class="about-title">
             <h1>{ name }</h1>
          </div>
-         <img class="about-avatar" src={avatar} alt="头像" />
+         <img class="avatar" src={avatar} alt="头像" />
          <div class="about-description">
             <hr />
             <div class="about-links">

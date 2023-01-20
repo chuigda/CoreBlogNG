@@ -1,9 +1,10 @@
 import { h } from 'tsx-dom'
 
 import NavBar from './components/nav-bar'
+import BlogList from './views/blog-list'
 import BlogRead from './views/blog-read'
 import About from './views/about-page'
-import BlogList from './views/blog-list'
+import LinkPage from './views/link'
 
 import wgc0310 from './wgc0310'
 
@@ -24,7 +25,7 @@ const handleRoute = () => {
    } else if (path[0] === 'about') {
       app.appendChild(<About />)
    } else if (path[0] === 'link') {
-      app.appendChild(<div>友链功能尚未完成，敬请期待</div>)
+      app.appendChild(<LinkPage />)
    } else if (path[0] === 'blog') {
       app.appendChild(<BlogRead blogId={ path[1] }/>)
    }

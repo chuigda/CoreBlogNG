@@ -108,3 +108,10 @@ h1, h2 {
     background-color: #cd0000;
     color: white;
 }
+
+.avatar {
+    border-radius: 50%;
+    border: 2px solid white;
+    outline: 2px solid black;
+    user-select: none;
+}
