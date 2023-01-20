@@ -60,9 +60,41 @@ h1, h2 {
     height: 300px;
 
     position: fixed;
-    z-index: 1145141919810;
+    z-index: 114514;
     right: 0;
     bottom: 0;
+}
 
-    pointer-events: none;
+.context-menu {
+    position: fixed;
+    z-index: 1919810;
+
+    background-color: white;
+    border: 1px solid black;
+
+    display: flex;
+    flex-direction: column;
+
+    row-gap: 2px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.context-menu > hr {
+    margin: 1px;
+    border-top: none;
+}
+
+.context-menu-item {
+    padding-left: 2px;
+    padding-right: 2px;
+
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+}
+
+.context-menu-item:hover {
+    background-color: #cd0000;
+    color: white;
 }

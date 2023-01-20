@@ -203,14 +203,58 @@ const loadWGLite = async () => {
       requestAnimationFrame(main)
    }
 
-   requestAnimationFrame(main)
+   const animMainLoop = requestAnimationFrame(main)
 
    console.info(`[I] 电子宠物加载完毕`)
+
+   const contextMenu = (
+      <div class="context-menu" style="display: none">
+         <div class="context-menu-item" onClick={() => {
+            cancelAnimationFrame(animMainLoop)
+            canvas.remove()
+
+            contextMenu.style.display = 'none'
+         }}>
+            暂时关闭
+         </div>
+         <div class="context-menu-item" onClick={() => {
+            console.error(`[E] 窝这么可爱你竟然要把窝关掉，下个版本拿你电脑挖矿`)
+            window.localStorage.setItem('hideWG', '扣1送地狱火 111111大哥真送吗')
+
+            cancelAnimationFrame(animMainLoop)
+            canvas.remove()
+
+            contextMenu.style.display = 'none'
+         }}>
+            不再显示
+         </div>
+         <hr />
+         <div class="context-menu-item" onClick={() => {
+            contextMenu.style.display = 'none'
+         }}>
+            关闭菜单
+         </div>
+      </div>
+   )
+
+   canvas.addEventListener('contextmenu', e => {
+      e.preventDefault()
+
+      contextMenu.style.left = `${e.clientX}px`
+      contextMenu.style.top = `${e.clientY}px`
+      contextMenu.style.display = 'block'
+   })
+
+   body.appendChild(contextMenu)
 }
 
 export default () => {
-   if (!('ontouchstart' in document.documentElement)) {
+   // get localStorage
+   const hideWG = window.localStorage.getItem('hideWG')
+
+   if (!('ontouchstart' in document.documentElement) && !hideWG) {
       // 只在桌面平台上加载看板娘，因为移动平台上收不到鼠标事件
+      // 如果用户选择手动关闭，那么也不显示
       loadWGLite().then(() => {})
    }
 }
