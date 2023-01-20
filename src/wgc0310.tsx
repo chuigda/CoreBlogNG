@@ -18,8 +18,10 @@ const createTexture = (gl: WebGLRenderingContext, image: ImageBitmap): WebGLText
 const initScreenRenderer = (gl: WebGLRenderingContext, glx: any, images: Record<string, ImageBitmap>) => {
    const cx: Record<string, any> = {}
 
-   cx.staticFace = createTexture(gl, images.staticFace)
-   cx.wink = createTexture(gl, images.wink)
+   for (const imageName in images) {
+      const image = images[imageName]
+      cx[imageName] = createTexture(gl, image)
+   }
 
    const screenVs = String.raw`
 precision mediump float;
@@ -65,13 +67,19 @@ void main() {
       }
    )
 
+   cx.denyChanges = false
+
+   cx.setMode = (mode: string, denyChanges: boolean) => {
+      console.log(`setMode mode=${mode} denyChanges=${denyChanges}`)
+      if (!cx.denyChanges) {
+         cx.mode = mode
+         cx.denyChanges = denyChanges
+      }
+   }
+
    return [cx, (gl: WebGLRenderingContext) => {
       cx.screenShader.useProgram(gl)
-      if (cx.mode === 'wink') {
-         gl.bindTexture(gl.TEXTURE_2D, cx.wink)
-      } else {
-         gl.bindTexture(gl.TEXTURE_2D, cx.staticFace)
-      }
+      gl.bindTexture(gl.TEXTURE_2D, cx[cx.mode || 'staticFace'])
       cx.buffer.draw(gl)
    }]
 }
@@ -81,7 +89,7 @@ const loadWGLite = async () => {
    const body = $('body')
 
    body.appendChild(
-      <canvas id="project-wg-lite" width="600" height="600">
+      <canvas id="project-wg-lite" width="600" height="400">
       </canvas>
    )
 
@@ -133,6 +141,8 @@ const loadWGLite = async () => {
    const imagePath = [
       ['staticFace', 'extra/images/static-face.png'],
       ['wink', 'extra/images/wink.png'],
+      ['unhappy', 'extra/images/unhappy.png'],
+      ['dead', 'extra/images/dead.png']
    ]
 
    const images: Record<string, ImageBitmap> = {}
@@ -155,7 +165,7 @@ const loadWGLite = async () => {
    const statusRef = {
       status: initStatus({
          entityStatus: {
-            translate: [0.0, 35.0, 75.0],
+            translate: [0.0, 25.0, 60.0],
             rotation: [10.0, 0.0, 0.0]
          },
          armStatus: {
@@ -180,18 +190,22 @@ const loadWGLite = async () => {
    })
 
    body.addEventListener('mousedown', () => {
-      if (screenCx.modeTimeout) {
-         clearTimeout(screenCx.modeTimeout)
+      console.log(screenCx.mode)
+      if (screenCx.mode !== 'unhappy' && screenCx.mode !== 'dead') {
+         if (screenCx.modeTimeout) {
+            clearTimeout(screenCx.modeTimeout)
+         }
+         screenCx.setMode('wink')
       }
-      screenCx.mode = 'wink'
    })
+
    body.addEventListener('mouseup', () => {
       if (screenCx.modeTimeout) {
          clearTimeout(screenCx.modeTimeout)
       }
 
       screenCx.modeTimeout = setTimeout(() => {
-         delete screenCx.mode
+         screenCx.setMode('staticFace')
          delete screenCx.modeTimeout
       }, 200)
    })
@@ -210,6 +224,12 @@ const loadWGLite = async () => {
    const contextMenu = (
       <div class="context-menu" style="display: none">
          <div class="context-menu-item" onClick={() => {
+            contextMenu.style.display = 'none'
+         }}>
+            关闭菜单
+         </div>
+         <hr />
+         <div class="context-menu-item" onClick={() => {
             cancelAnimationFrame(animMainLoop)
             canvas.remove()
 
@@ -221,18 +241,23 @@ const loadWGLite = async () => {
             console.error(`[E] 窝这么可爱你竟然要把窝关掉，下个版本拿你电脑挖矿`)
             window.localStorage.setItem('hideWG', '扣1送地狱火 111111大哥真送吗')
 
-            cancelAnimationFrame(animMainLoop)
-            canvas.remove()
+            screenCx.setMode('unhappy', true)
+
+            setTimeout(() => {
+               screenCx.mode = 'dead'
+               setTimeout(() => {
+                  cancelAnimationFrame(animMainLoop)
+                  canvas.remove()
+               }, 1500)
+            }, 1500)
 
             contextMenu.style.display = 'none'
+         }} onMouseEnter={() => {
+            screenCx.setMode('unhappy')
+         }} onMouseLeave={() => {
+            screenCx.setMode('staticFace')
          }}>
             不再显示
-         </div>
-         <hr />
-         <div class="context-menu-item" onClick={() => {
-            contextMenu.style.display = 'none'
-         }}>
-            关闭菜单
          </div>
       </div>
    )
