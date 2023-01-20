@@ -70,7 +70,6 @@ void main() {
    cx.denyChanges = false
 
    cx.setMode = (mode: string, denyChanges: boolean) => {
-      console.log(`setMode mode=${mode} denyChanges=${denyChanges}`)
       if (!cx.denyChanges) {
          cx.mode = mode
          cx.denyChanges = denyChanges
@@ -190,7 +189,6 @@ const loadWGLite = async () => {
    })
 
    body.addEventListener('mousedown', () => {
-      console.log(screenCx.mode)
       if (screenCx.mode !== 'unhappy' && screenCx.mode !== 'dead') {
          if (screenCx.modeTimeout) {
             clearTimeout(screenCx.modeTimeout)
