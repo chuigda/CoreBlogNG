@@ -2,17 +2,82 @@ import { h } from 'tsx-dom'
 
 const importDynamic = (path: string) => import(/* @vite-ignore */ path)
 
-const loadImage = (path: string) => {
-   return new Promise((resolve, reject) => {
-      const img = new Image()
-      img.src = path
-      img.onload = () => resolve(img)
-      img.onerror = reject
-   })
+const createTexture = (gl: WebGLRenderingContext, image: ImageBitmap): WebGLTexture => {
+   const texture = gl.createTexture()
+   gl.bindTexture(gl.TEXTURE_2D, texture)
+   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image)
+   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+   gl.bindTexture(gl.TEXTURE_2D, null)
+
+   return texture!
+}
+
+const initScreenRenderer = (gl: WebGLRenderingContext, glx: any, images: Record<string, ImageBitmap>) => {
+   const cx: Record<string, any> = {}
+
+   cx.staticFace = createTexture(gl, images.staticFace)
+   cx.wink = createTexture(gl, images.wink)
+
+   const screenVs = String.raw`
+precision mediump float;
+
+attribute vec2 aVertexCoord;
+
+varying vec2 uvCoord;
+
+void main() {
+  uvCoord = vec2(aVertexCoord.x / 2.0 + 0.5, 1.0 - (aVertexCoord.y / 2.0 + 0.5));
+  gl_Position = vec4(aVertexCoord, 0.0, 1.0);
+}
+`
+   const screenFs = String.raw`
+precision mediump float;
+
+varying vec2 uvCoord;
+
+uniform sampler2D tex;
+
+void main() {
+    gl_FragColor = texture2D(tex, uvCoord);
+}
+`
+
+   cx.screenShader = glx.createShaderProgram(gl, screenVs, screenFs)
+   const vertexCoordPos = cx.screenShader.getAttribLocation(gl, 'aVertexCoord')
+
+   cx.buffer = glx.createVertexBuffer(
+      gl,
+      [
+         -1.0, -1.0,
+         1.0, 1.0,
+         -1.0, 1.0,
+
+         -1.0, -1.0,
+         1.0, -1.0,
+         1.0, 1.0
+      ],
+      {
+         stride: 2,
+         attributes: [{ position: vertexCoordPos, size: 2, offset: 0 }]
+      }
+   )
+
+   return [cx, (gl: WebGLRenderingContext) => {
+      cx.screenShader.useProgram(gl)
+      if (cx.mode === 'wink') {
+         gl.bindTexture(gl.TEXTURE_2D, cx.wink)
+      } else {
+         gl.bindTexture(gl.TEXTURE_2D, cx.staticFace)
+      }
+      cx.buffer.draw(gl)
+   }]
 }
 
 const loadWGLite = async () => {
-   const { initializeGL, resizeGL, paintGL, initStatus } = await importDynamic('./extra/project-wg-lite.mjs')
+   const { initializeGL, resizeGL, paintGL, initStatus, setScreenRenderer, glx } = await importDynamic('./extra/project-wg-lite.mjs')
    const body = $('body')
 
    body.appendChild(
@@ -72,11 +137,20 @@ const loadWGLite = async () => {
 
    const images: Record<string, ImageBitmap> = {}
    for (const [name, path] of imagePath) {
-      images[name] = (await loadImage(path)) as ImageBitmap
+      images[name] = await $().get(path, {}, async resp => {
+         const blob = await resp.blob()
+         return createImageBitmap(blob, {
+            premultiplyAlpha: 'none',
+            colorSpaceConversion: 'none',
+         })
+      })
    }
 
    initializeGL(gl, model)
    resizeGL(gl, canvas.width, canvas.height)
+
+   const [screenCx, renderScreen] = initScreenRenderer(gl, glx, images)
+   setScreenRenderer(renderScreen)
 
    const statusRef = {
       status: initStatus({
@@ -97,23 +171,30 @@ const loadWGLite = async () => {
 
    body.addEventListener('mousemove', e => {
       const { clientWidth, clientHeight } = body
-      const [halfWidth, twoThirdHeight, halfHeight] = [clientWidth / 2, clientHeight * 2 / 3, clientHeight / 2]
+      const [width, twoThirdHeight, halfHeight] = [clientWidth - 150, clientHeight * 2 / 3, clientHeight / 2]
       const { x, y } = e
 
       statusRef.status.headStatus.rotationX = ((y - twoThirdHeight) / halfHeight) * 30.0
-      statusRef.status.headStatus.rotationY = ((x - halfWidth) / halfWidth) * 15
-      statusRef.status.headStatus.rotationZ = ((x - halfWidth) / halfWidth) * - 10.0
+      statusRef.status.headStatus.rotationY = ((x - width) / width) * 15
+      statusRef.status.headStatus.rotationZ = ((x - width) / width) * - 10.0
    })
 
-   /*
    body.addEventListener('mousedown', () => {
-      console.log('mouse down')
+      if (screenCx.modeTimeout) {
+         clearTimeout(screenCx.modeTimeout)
+      }
+      screenCx.mode = 'wink'
    })
-
    body.addEventListener('mouseup', () => {
-      console.log('mouse up')
+      if (screenCx.modeTimeout) {
+         clearTimeout(screenCx.modeTimeout)
+      }
+
+      screenCx.modeTimeout = setTimeout(() => {
+         delete screenCx.mode
+         delete screenCx.modeTimeout
+      }, 200)
    })
-   */
 
    const main = () => {
       const gl = canvas.getContext('webgl')

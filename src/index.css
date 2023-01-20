@@ -63,4 +63,6 @@ h1, h2 {
     z-index: 1145141919810;
     right: 0;
     bottom: 0;
+
+    pointer-events: none;
 }
