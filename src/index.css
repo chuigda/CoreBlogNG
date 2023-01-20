@@ -1,11 +1,14 @@
+/*noinspection CssUnknownTarget*/
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap');
 
 @font-face {
     font-family: "iconfont";
+    /*noinspection CssUnknownTarget*/
     src: url('../resc/iconfont.ttf?t=1674020795789') format('truetype');
 }
 
 .iconfont {
+    /*noinspection CssNoGenericFontName*/
     font-family: "iconfont" !important;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
