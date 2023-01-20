@@ -1,7 +1,7 @@
 !!meta-define:ident:genshin-proprietary
 !!meta-define:title:天空岛，神之眼与专有软件
 !!meta-define:author:Chuigda WhiteGive
-!!meta-define:time:2023-01-10T10:07:26+08:00
+!!meta-define:time:2023-01-19T10:07:26+08:00
 !!meta-define:liberal:true
 !!meta-define:tags:意识流,原神,专有软件,自由软件
 !!meta-define:brief:本文尝试通过计算机科学的视角分析神之眼和神之心的本质，逐步揭开隐藏在游戏《原神》背后的真相。

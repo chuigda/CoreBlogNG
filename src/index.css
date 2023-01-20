@@ -25,6 +25,11 @@ code {
     font-family: monospace;
 }
 
+pre {
+    background-color: #dfdfdf;
+    padding: 0.5em;
+}
+
 body {
     margin: 0
 }
