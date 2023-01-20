@@ -5,7 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CoreBlogNG</title>
 
-    <script src="fake-jquery.js"></script>
+    <script type="text/javascript">
+const ajax = {
+  get: async (url, headers, responder) => {
+    responder = responder || (x => x.json())
+    const resp = await fetch(url, {headers})
+    return await responder(resp)
+  }
+}
+
+self.$ = s => s ? document.querySelector(s) : ajax
+    </script>
     <script src="src/index.tsx" type="module"></script>
   </head>
   <body ondragstart="return false" ondrop="return false">

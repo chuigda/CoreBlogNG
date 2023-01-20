@@ -7,7 +7,7 @@
     "dev": "vite",
     "generate": "node scripts/compile.cjs ./markdown ./data",
     "cleanup": "rm -rf data && mkdir -p data/blog && mkdir -p data/list",
-    "build": "tsc && vite build && cp fake-jquery.js dist/ && cp -r public dist/ && cp -r data dist/data && cp -r extra dist/ && cp src/extra/project-wg-lite.mjs dist/extra/"
+    "build": "tsc && vite build && cp -r public dist/ && cp -r data dist/data && cp -r extra dist/ && cp src/extra/project-wg-lite.mjs dist/extra/"
   },
   "devDependencies": {
     "showdown": "^2.1.0",
