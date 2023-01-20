@@ -13,7 +13,6 @@ const LinkItem = (props: any) => {
          <img class="avatar" src={avatar} alt={name} />
          <div class="link-content">
             <a href={link}><b>{name}</b></a>
-            <br />
             { description ?? '这个人很懒，什么都没有写' }
          </div>
       </div>
