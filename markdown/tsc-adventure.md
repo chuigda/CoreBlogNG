@@ -71,15 +71,17 @@ const travel: Travel = {
             }
 
 +            function hasOptionalFields(type: Type): boolean {
-+                return getPropertiesOfType(type).some(member => (member.flags & SymbolFlags.Optional) !== 0);
++                return getPropertiesOfType(type).some(
++                    member => (member.flags & SymbolFlags.Optional) !== 0
++                );
 +            }
 +
            /**
             * Compare two types and return
             * * Ternary.True if they are related with no assumptions,
-            @@ -17795,7 +17799,10 @@ namespace ts {
-            isSimpleTypeRelatedTo(source, target, relation, reportErrors ? reportError : undefined)) return Ternary.True;
 
+
+            @@ -17795,7 +17799,10 @@ namespace ts {
                  const isComparingJsxAttributes = !!(getObjectFlags(source) & ObjectFlags.JsxAttributes);
 -                const isPerformingExcessPropertyChecks = !(intersectionState & IntersectionState.Target) 
 -                    && (isObjectLiteralType(source) 
