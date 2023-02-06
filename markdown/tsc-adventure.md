@@ -2,7 +2,7 @@
 !!meta-define:title:TypeScript 历险记
 !!meta-define:author:Chuigda WhiteGive
 !!meta-define:time:2022-01-20T03:21:00+08:00
-!!meta-define:tags:前端,JavaScript
+!!meta-define:tags:前端,JavaScript,TypeScript
 !!meta-define:brief:一个前端菜鸡不信邪，这是他捣鼓了一晚上 TypeScript 编译器的成果
 
 ## 前言
@@ -81,7 +81,9 @@ const travel: Travel = {
             isSimpleTypeRelatedTo(source, target, relation, reportErrors ? reportError : undefined)) return Ternary.True;
 
                  const isComparingJsxAttributes = !!(getObjectFlags(source) & ObjectFlags.JsxAttributes);
--                const isPerformingExcessPropertyChecks = !(intersectionState & IntersectionState.Target) && (isObjectLiteralType(source) && getObjectFlags(source) & ObjectFlags.FreshLiteral);
+-                const isPerformingExcessPropertyChecks = !(intersectionState & IntersectionState.Target) 
+-                    && (isObjectLiteralType(source) 
+-                    && getObjectFlags(source) & ObjectFlags.FreshLiteral);
 +                const isPerformingExcessPropertyChecks =
 +                    !(intersectionState & IntersectionState.Target)
 +                    && (isObjectLiteralType(source) && getObjectFlags(source) & ObjectFlags.FreshLiteral)
