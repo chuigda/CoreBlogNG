@@ -1,7 +1,7 @@
 !!meta-define:ident:yue-yang-lou-ji
 !!meta-define:title:岳阳楼记
 !!meta-define:author:Chuigda WhiteGive
-!!meta-define:time:2023-02-15T16:36:15+08:00
+!!meta-define:time:2023-02-05T16:36:15+08:00
 !!meta-define:liberal:true
 !!meta-define:tags:古文
 !!meta-define:brief:不以物喜，不以己悲，居庙堂之高则忧其民，处江湖之远则忧其君
