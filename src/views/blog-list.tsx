@@ -25,7 +25,6 @@ const BlogList = ({ liberal }) => {
 
    return (
       <div id="blog-list">
-
       </div>
    )
 }
