@@ -126,4 +126,4 @@ baz = { x: 5, y: 4, z: 114514 }; // Error
 
 测试项目方面，Project test 全过，然后因为这个 Patch 改变了 Excess Property Check 的语义，所以 Conformance test 挂了一些。我随便看了几个，基本都是符合预期的。因为我不是专业的 TypeScript 程序员，所以就不再深入探索了。
 
->〚就暂且接受现状 (工程学+500，社会学+500）〛
+>〚就暂且接受现状 (工程学+500，社会学+500)〛
