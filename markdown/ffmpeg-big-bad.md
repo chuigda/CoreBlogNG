@@ -1,7 +1,7 @@
 !!meta-define:ident:ffmpeg-big-bad
 !!meta-define:title:FFmpeg 遇坑记
 !!meta-define:author:Chuigda WhiteGive
-!!meta-define:time:2021-06-29T18:21:00+08:00
+!!meta-define:time:2020-07-03T18:30:00+08:00
 !!meta-define:tags:FFmpeg,C,C++,音视频处理
 !!meta-define:brief:折腾一下还是挺锻炼个人能力的；但是没文档真的害死人
 
