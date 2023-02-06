@@ -1,7 +1,7 @@
 !!meta-define:ident:lsm-tree-and-5min-rule
 !!meta-define:title:Five Minutes Rule
 !!meta-define:author:Chuigda WhiteGive
-!!meta-define:time:2020-04-15T3:00:00+08:00
+!!meta-define:time:2020-04-15T03:00:00+08:00
 !!meta-define:tags:数据库
 !!meta-define:brief:时间相信大家都很熟悉，但五分钟原则又是什么呢？下面就跟小编一起来看一下吧
 
