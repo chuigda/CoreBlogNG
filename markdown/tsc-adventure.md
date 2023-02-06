@@ -56,12 +56,12 @@ const travel: Travel = {
 ## Excess Property Check 的局限性
 根据 [TypeScript Specification](https://github.com/microsoft/TypeScript/blob/main/doc/spec-ARCHIVED.md#3115-excess-properties)，这个检查只会在“赋值”右边是 fresh object literal 时候进行。并且，这个检查不会考察“赋值”的左边到底有没有可选字段。这两点加起来就形成了本文一开始的“诡异”局面。
 
-== 我不满意
+## 我不满意
 “没有可选字段也要检查？我不满意。” 于是我就单纯为了满足自己的探索和 NTR 欲望，开始尝试修改 TypeScript 编译器。
 
 我们都知道，在修改编译器的时候有很多种办法可以出老千。例如，在现代一点的编译器架构里，诊断信息一般都是统一管理起来的。TS也不例外，报错信息被放在 [src/compiler/diagnosticMessages.json](https://github.com/microsoft/TypeScript/blob/main/src/compiler/diagnosticMessages.json)。只消修改一下诊断信息的级别，就能选择性地“移除”某些编译错误。但这是不行的，因为这通过编译器选项也可以做到 —— 这本质上没有改变任何东西，没有增强语言的功能，仅仅是站在巨人的肩膀上摘了个苹果，如果传出去一定会被同侪们耻笑。所以我们面对编译器不能选择这种做法。相反，我们必须用外科手术般精确的操作，把特性当中不喜欢的部分给按死。
 
-== 我的 Patch (基于 TypeScript-4.4.3)
+## 我的 Patch (基于 TypeScript-4.4.3)
 
 ```diff
 --- a/src/compiler/checker.ts
