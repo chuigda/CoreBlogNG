@@ -38,7 +38,6 @@ const App = () => {
    return (
       <div>
          <NavBar />
-         <hr/>
          <div id="app">
          </div>
       </div>
