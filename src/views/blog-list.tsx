@@ -19,7 +19,7 @@ const BlogList = ({ liberal }) => {
                   <a onClick={e => {
                      e.preventDefault()
                      window.location.hash = `/blog/${timestamp}-${ident}`
-                  }} tabIndex={0} href={`/   #/blogs/${timestamp}-${ident}`}>
+                  }} tabIndex={0} href={`/#/blogs/${timestamp}-${ident}`}>
                      {title}
                   </a>
                </h2>
