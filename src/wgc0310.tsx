@@ -185,7 +185,7 @@ const loadWGLite = async () => {
 
       statusRef.status.headStatus.rotationX = ((y - twoThirdHeight) / halfHeight) * 30.0
       statusRef.status.headStatus.rotationY = ((x - width) / width) * 15
-      statusRef.status.headStatus.rotationZ = ((x - width) / width) * - 10.0
+      statusRef.status.headStatus.rotationZ = ((x - width) / width) * -10.0
    })
 
    body.addEventListener('mousedown', () => {

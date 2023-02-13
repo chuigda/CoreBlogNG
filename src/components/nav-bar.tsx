@@ -5,18 +5,23 @@ import './nav-bar.css'
 // @ts-ignore
 const NavLink = ({ hashLink, children }) => (
    <div class="nav-item" onClick={() => window.location.hash = hashLink}>
-      {children}
+      <a href={hashLink} onClick={e => {
+         e.preventDefault()
+         window.location.hash = hashLink
+      }}>
+         {children}
+      </a>
    </div>
 )
 
 const NavBar = () => {
    return (
-      <div class="nav">
+      <nav class="nav">
          <NavLink hashLink="/liberal"><span>隨想</span></NavLink>
          <NavLink hashLink="/tech"><span>技術</span></NavLink>
          <NavLink hashLink="/about"><span>關於</span></NavLink>
          <NavLink hashLink="/link"><span>友鏈</span></NavLink>
-      </div>
+      </nav>
    )
 }
 

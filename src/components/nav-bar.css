@@ -34,13 +34,6 @@
     background-color: #3f3f3f;
 }
 
-.nav-item > span {
-    margin-top: -4pt;
-    font-size: 20pt;
-    font-family: 'FOT-Matisse Pro EB', 'Noto Serif SC', serif;
-    font-weight: 900;
-}
-
 .nav > .nav-item {
     --left-margin: max(40px, 0.5 * (100vw - 1024px))
 }
@@ -49,3 +42,12 @@
 .nav > .nav-item:nth-child(2) { left: calc(var(--left-margin) + 200px); }
 .nav > .nav-item:nth-child(3) { left: calc(var(--left-margin) + 400px); }
 .nav > .nav-item:nth-child(4) { left: calc(var(--left-margin) + 600px); }
+
+.nav-item > a {
+    margin-top: -4pt;
+    font-size: 20pt;
+    font-family: 'FOT-Matisse Pro EB', 'Noto Serif SC', serif;
+    font-weight: 900;
+    color: white;
+    text-decoration: none;
+}
