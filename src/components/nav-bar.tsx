@@ -4,14 +4,12 @@ import './nav-bar.css'
 
 // @ts-ignore
 const NavLink = ({ hashLink, children }) => (
-   <div class="nav-item" onClick={() => window.location.hash = hashLink}>
-      <a href={hashLink} onClick={e => {
+      <a class="nav-item" href={`/#${hashLink}`} onClick={e => {
          e.preventDefault()
          window.location.hash = hashLink
       }}>
-         {children}
+         <span>{children}</span>
       </a>
-   </div>
 )
 
 const NavBar = () => {

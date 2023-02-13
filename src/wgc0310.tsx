@@ -88,7 +88,9 @@ const loadWGLite = async () => {
    const body = $('body')
 
    body.appendChild(
-      <canvas id="project-wg-lite" width="600" height="400">
+      <canvas id="project-wg-lite" width="600" height="400" title="WGC0310">
+         Unfortunately, your browser does not support Project-WG.
+         Right click to disable Project-WG if you find it annoying.
       </canvas>
    )
 

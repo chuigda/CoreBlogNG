@@ -19,7 +19,7 @@
     margin: 0
 }
 
-.blog-item > h2 > div {
+.blog-item > h2 > a {
     cursor: pointer;
     text-decoration: underline;
 }
