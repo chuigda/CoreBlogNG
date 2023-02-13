@@ -17,6 +17,7 @@ const NavLink = ({ hashLink, children }) => (
 
          if (IsMobileDevice) {
             $('#expand-menu').style.display = 'none'
+            $('#expand-menu-icon').innerText = '▼'
          }
       }}>
          <span>{children}</span>
@@ -37,19 +38,22 @@ const NavBar = () => {
             <div class="expand-button"
                  onClick={() => {
                    const expandMenu = $('#expand-menu')
+                   const expandMenyIcon = $('#expand-menu-icon')
                    const currentDisplay = expandMenu.style.display
 
                    if (currentDisplay === 'none') {
                       expandMenu.style.display = 'flex'
+                      expandMenyIcon.innerText = '✕'
                    } else {
                       expandMenu.style.display = 'none'
+                      expandMenyIcon.innerText = '▼'
                    }
                  }}
                  role="menu"
                  tabIndex={0}
                  aria-label="menu"
             >
-               <span>☰</span>
+               <span id="expand-menu-icon">▼</span>
             </div>
             <div class="expand-menu" id="expand-menu" style={{ display: 'none' }}>
                { links }
