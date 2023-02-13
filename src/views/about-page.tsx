@@ -13,6 +13,15 @@ const {
 } = config
 
 const Index = () => {
+   setTimeout(() => {
+      $('#dynamicJSONLD').innerHTML = JSON.stringify({
+         '@context': 'https://schema.org',
+         '@type': 'About',
+         'name': `CoreBlogNG about page`,
+         'description': `CoreBlogNG about page`
+      })
+   }, 0)
+
    return (
       <div class="about">
          <div class="about-title">

@@ -26,6 +26,13 @@ const LinkPage = () => {
       for (const item of links) {
          linkPage.appendChild(<LinkItem item={item} />)
       }
+
+      $('#dynamicJSONLD').innerHTML = JSON.stringify({
+         '@context': 'https://schema.org',
+         '@type': 'Friend link',
+         'name': `CoreBlogNG friend link page`,
+         'description': `CoreBlogNG friend link page`
+      })
    }, 0)
 
    return (

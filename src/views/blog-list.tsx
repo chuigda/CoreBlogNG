@@ -28,6 +28,14 @@ const BlogList = ({ liberal }) => {
             </div>
          )
       })
+
+      $('#dynamicJSONLD').innerHTML = JSON.stringify({
+         '@context': 'https://schema.org',
+         '@type': 'Blog list',
+         'name': `CoreBlogNG ${liberal ? 'liberal' : 'technology'} blog list`,
+         'description': `CoreBlogNG ${liberal ? 'liberal' : 'technology'} blog list page`
+      })
+
    }, 0)
 
    return (

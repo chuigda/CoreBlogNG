@@ -2,13 +2,14 @@ import { h } from 'tsx-dom'
 
 import config from '../config'
 import './blog-read.css'
+import dayjs from "dayjs";
 
 const { api: { base } } = config
 
 // @ts-ignore
 const BlogRead = ({ blogId }) => {
    setTimeout(async () => {
-      const { title, html, liberal } = await $().get<any>(`${base}/blog/${blogId}`)
+      const { author, time, title, brief, html, liberal } = await $().get<any>(`${base}/blog/${blogId}`)
       $('#blog-read').style.cssText = ''
       $('#blog-title').innerText = title
 
@@ -17,6 +18,18 @@ const BlogRead = ({ blogId }) => {
       if (liberal) {
          blogContent.classList.add('liberal')
       }
+
+      $('#dynamicJSONLD').innerHTML = JSON.stringify({
+         '@context': 'https://schema.org',
+         '@type': 'Blog',
+         'name': title,
+         'description': brief,
+         'author': {
+            '@type': 'Person',
+            'name': author
+         },
+         'datePublished': dayjs(time).format('YYYY-MM-DD')
+      })
    }, 0)
 
    return (
