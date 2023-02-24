@@ -35,6 +35,10 @@
     margin-top: 0.125em;
 }
 
+#blog-content.liberal > h3 {
+    text-align: center;
+}
+
 #blog-content > blockquote {
     background-color: #dfdfdf;
     margin: 0;
