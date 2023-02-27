@@ -1,7 +1,7 @@
 export default {
    blog: {
       name: 'CoreBlogNG',
-      description: '天空好像下雨，我好想住你隔壁。',
+      description: '爱我所选之路，此路风月常新。',
       avatar: 'public/avatar.png',
       links: [
          { icon: '\ue887', text: '2571851049' },
