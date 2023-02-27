@@ -5,13 +5,13 @@
 !!meta-define:tags:JavaScript,编译器
 !!meta-define:brief:本文教程尝试用一种很少有人尝试过的手段，破除笼罩在编译器上那层神秘的玄学面纱，在十分钟内教会编译器中的基本概念。
 
-简单来说，编译器就是一种能够将源代码**保语义**地变换为目标代码的程序。编译器和你我所写过的其他程序没有任何本质上的区别，它也是用代码编写出来的。本文尝试用一种很少有人尝试过的手段，破除笼罩在编译器上那层神秘的玄学面纱，在十分钟内教会编译器中的基本概念。
+简单来说，编译器就是一种能够将源代码**保语义**地变换为目标代码的程序。编译器和你我所写过的其他程序没有任何本质上的区别，它也是用代码编写出来的，并且只要想的话，你也可以写。本文尝试用一种很少有人尝试过的手段，破除笼罩在编译器上那层神秘的玄学面纱，在十分钟内教会编译器中的基本概念。
 
-阅读本文需要一定程度的 JavaScript 基础。*我打算有空就把本文中所有代码写成与 ES3 标准兼容的形式。*
+阅读本文需要读者具有一定的 JavaScript 基础。*我打算有空就把本文中所有代码写成与 ES3 标准兼容的形式。*
 
 ## 语言
 
-本文以一种类似 [Scheme](https://zh.wikipedia.org/zh-cn/Scheme) 语言的子集作为研究对象。这种语言使用[前缀表示法](https://zh.wikipedia.org/zh-hans/%E6%B3%A2%E5%85%B0%E8%A1%A8%E7%A4%BA%E6%B3%95)来书写表达式：
+本文以一种 [Scheme](https://zh.wikipedia.org/zh-cn/Scheme) 语言的子集作为研究对象。这种语言使用[前缀表示法](https://zh.wikipedia.org/zh-hans/%E6%B3%A2%E5%85%B0%E8%A1%A8%E7%A4%BA%E6%B3%95)来书写表达式：
 
 ```scheme
 (+ 3 4) ; 表示 3 + 4
@@ -69,21 +69,33 @@
 
 ## 从语法树生成目标代码
 
-从语法树生成目标代码的过程相对来说直观且简单，所以本文先讲解这一部分。当拿到上面这样的语法树之后，基本上只要递归遍历它一遍，就能实现代码生成。比如，假如我们想从语法树生成常规的中缀表达式：
+从语法树生成目标代码的过程相对来说直观且简单，所以本文先讲解这一部分。当拿到上面这样的语法树之后，基本上只要递归遍历它一遍，就能实现代码生成。比如从语法树生成常规的中缀表达式：
 
 ```javascript
-const generate = tree_item => {
-   if (typeof tree_item === 'number') {
-      return `${tree_item}`
-   } else if (typeof tree_item === 'object') {
-      const operands = tree_item.operands.map(generate)
-      return '(' + operands.join(` ${tree_item.operator} `) + ')'
+function generate(tree_item) {
+   if(typeof tree_item == 'number') {
+      return tree_item.toString()
+   } else if (typeof tree_item == 'object') {
+      var operands = []
+      for (var i = 0; i < tree_item.operands.length; i++) {
+         operands.push(generate(tree_item.operands[i]))
+      }
+
+      var ret = '('
+      for (var i = 0; i < operands.length; i++) {
+         ret += operands[i]
+         if (i < operands.length - 1) {
+            ret += ' ' + tree_item.operator + ' '
+         }
+      }
+      ret += ')'
+      return ret
    } else {
       throw new Error('malformed syntax tree')
    }
 }
 
-const generated = generate({
+var generated = generate({
    operator: '*',
    operands: [
       {
@@ -101,25 +113,33 @@ console.log(generated)
 console.log(eval(generated)) // very sorry!
 ```
 
-或者，如果你想直接对语法树解释求值也可以：
+或者，如果想直接对语法树解释求值也可以：
 
 ```javascript
-const choose_reducer = operator => {
+function choose_reducer(operator) {
    switch (operator) {
-      case '+': return (a, b) => a + b
-      case '-': return (a, b) => a - b
-      case '*': return (a, b) => a * b
-      case '/': return (a, b) => a / b
+      case '+': return function (a, b) { return a + b }
+      case '-': return function (a, b) { return a - b }
+      case '*': return function (a, b) { return a * b }
+      case '/': return function (a, b) { return a / b }
    }
 }
 
-const evaluate = tree_item => {
-   if (typeof tree_item === 'number') {
+function evaluate(tree_item) {
+   if (typeof tree_item == 'number') {
       return tree_item
-   } else if (typeof tree_item === 'object') {
-      const operands = tree_item.operands.map(evaluate)
-      const reducer = choose_reducer(tree_item.operator)
-      return operands.reduce(reducer)
+   } else if (typeof tree_item == 'object') {
+      var operands = []
+      for (var i = 0; i < tree_item.operands.length; i++) {
+         operands.push(evaluate(tree_item.operands[i]))
+      }
+
+      var reducer = choose_reducer(tree_item.operator)
+      var value = operands[0]
+      for (var i = 1; i < operands.length; i++) {
+         value = reducer(value, operands[i])
+      }
+      return value
    } else {
       throw new Error('malformed syntax tree')
    }
@@ -142,7 +162,7 @@ console.log(evaluate({
 
 ## 从源代码生成语法树
 
-按照“国际惯例”，从源代码生成语法树一般会有**词法分析**、**语法分析**和**语义分析**几个步骤。因为本文中使用的表达式语言目前为止还非常简单，几乎不会有什么语义错误，因此本文只会涉及词法分析和语法分析两个阶段。
+按照“国际惯例”，从源代码生成语法树一般会有**词法分析**、**语法分析**和**语义分析**几个步骤。因为本文中使用的表达式语言目前为止还非常简单，不会引入什么*语义问题*，因此本文只会涉及词法分析和语法分析两个阶段。
 
 ### 词法分析
 
@@ -162,36 +182,52 @@ console.log(evaluate({
 这一步操作有助于减少输入的复杂度，减少后续分析的工作量。词法分析总体上是非常 *trivial* 的工作，随手就能写一个：
 
 ```javascript
-const is_whitespace = char => ' \r\n\t\f\v'.includes(char)
+function is_symbol(char) {
+   return char == '('
+      || char == ')'
+      || char == '+'
+      || char == '-'
+      || char == '*'
+      || char == '/'
+}
 
-const is_symbol = char => '()+-*/'.includes(char)
+function is_number(char) {
+   return char == '0'
+      || char == '1'
+      || char == '2'
+      || char == '3'
+      || char == '4'
+      || char == '5'
+      || char == '6'
+      || char == '7'
+      || char == '8'
+      || char == '9'
+}
 
-const is_number = char => '0123456789'.includes(char)
+function lex_analysis(input) {
+   var result = []
 
-const lex_analysis = input => {
-   const result = []
-
-   let idx = 0
+   var idx = 0
    while (idx < input.length) {
-      if (is_whitespace(input[idx])) {
+      if (is_whitespace(input.charAt(idx))) {
          idx += 1
-      } else if (input[idx] === ';') {
-         while (idx < input.length && input[idx] !== '\n') {
+      } else if (input.charAt(idx) == ';') {
+         while (idx < input.length && input.charAt(idx) != '\n') {
             idx += 1
          }
-      } else if (is_symbol(input[idx])) {
-         result.push(input[idx])
+      } else if (is_symbol(input.charAt(idx))) {
+         result.push(input.charAt(idx))
          idx += 1
-      } else if (is_number(input[idx])) {
-         let num = ''
-         while (idx < input.length && is_number(input[idx])) {
-            num = num + input[idx]
+      } else if (is_number(input.charAt(idx))) {
+         var num = ''
+         while (idx < input.length && is_number(input.charAt(idx))) {
+            num = num + input.charAt(idx)
             idx += 1
          }
 
          result.push(parseInt(num))
       } else {
-         throw new Error(`invalid character ${input[idx]}`)
+         throw new Error('unexpected character')
       }
    }
 
@@ -231,39 +267,40 @@ console.log(lex_analysis(
 这样，我们就得到了一种最简单的构造编译器语法分析器的方式：**递归下降**。手写一个递归下降分析器同样也很 *trivial*，如果看一遍读不懂的话就多看，思路跟着控制流走一走，或者干脆试试多抄几遍吧 `=)`
 
 ```javascript
-const is_operator = char => '+-*/'.includes(char)
-
-const parse_expr = (context, tokens) => {
-   const token = tokens[context.idx]
-   if (typeof token === 'number') {
+function parse_expr(context, tokens) {
+   var token = tokens[context.idx]
+   if (typeof token == 'number') {
       context.idx += 1
       return token
-   } else if (token === '(') {
+   } else if (token == '(') {
       context.idx += 1
       return parse_compound_expr(context, tokens)
    } else {
-      throw new Error('syntax error')
+      throw new Error('unexpected token')
    }
 }
 
-const parse_compound_expr = (context, tokens) => {
-   const operator = tokens[context.idx]
+function parse_compound_expr(context, tokens) {
+   var operator = tokens[context.idx]
    if (!is_operator(operator)) {
-      throw new Error('syntax error')
+      throw new Error('unexpected token')
    }
-   const operands = []
 
+   var operands = []
    context.idx += 1
-   while (context.idx < tokens.length && tokens[context.idx] !== ')') {
-      const operand = parse_expr(context, tokens)
+   while (context.idx < tokens.length && tokens[context.idx] != ')') {
+      var operand = parse_expr(context, tokens)
       operands.push(operand)
    }
 
-   if (context.idx === tokens.length) {
-      throw new Error('syntax error')
+   if (context.idx == tokens.length) {
+      throw new Error('unexpected end of input')
    } else {
       context.idx += 1
-      return { operator, operands }
+      return {
+         operator: operator,
+         operands: operands
+      }
    }
 }
 
@@ -279,8 +316,18 @@ console.log(JSON.stringify(parse_expr({ idx: 0 }, lex_analysis(
 
 ## 结语
 
-把上面那堆东西组装起来，你就获得了一个最基本的编译器（或者解释器）。你可以在 [这里](extra/code/10mins-compiler.js) 找到完整的代码。
+把上面那堆东西组装起来，你就获得了一个最基本的编译器（或者解释器）。你可以在 [这里](extra/code/10mins-compiler/10mins-compiler-compat.js) 找到完整的代码 （[网页演示版本](extra/code/10mins-compiler/10mins-compiler-online.html)）。
+
+*[这个](extra/code/10mins-compiler/10mins-compiler.js) 是原先使用现代一些的 JavaScript 编写的版本。*
 
 千里冰封曾经说过，“编译器入门是一个非常主观的东西，你觉得自己会了就是会了”。受篇幅所限，本文显然无法包揽编译技术的方方面面，但它应该能够给你提供足够帮你入门的知识，并且给予你进一步学习它们的自信。
 
 *此外，如果你读到这里还没发现整篇教程的代码都是用三空格缩进的，那就成为一个三空格奇数小王子吧！2 太少，4 太多，所以 3 刚刚好！*
+
+## 练习
+1. 扩展词法分析器的能力，让它支持小数点
+2. 扩展语法分析器的能力，让它能解析由多个表达式组成的程序
+3. <sup>*</sup>扩展整个“编译器”的能力，让它支持字符串类型的字面量，并规定字符串只能和字符串相加
+4. <sup>*</sup>在 3 的基础上，增加两个操作符 `num->str` 和 `str->num`，实现数字和字符串之间的转换
+
+*带星号的项目为进阶内容，不会做也没关系*
