@@ -1,5 +1,5 @@
 function generate(tree_item) {
-   if(typeof tree_item == 'number') {
+   if (typeof tree_item == 'number') {
       return tree_item.toString()
    } else if (typeof tree_item == 'object') {
       var operands = []
