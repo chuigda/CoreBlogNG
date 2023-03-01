@@ -11,7 +11,7 @@
 
 ## 1. 文档呢？我文档呢？
 
-如果说 scikit-image 的文档是极其匿乏，那么FFopeg简直就是意识流文档，说是皇帝的新文档也不过分。当我打开 [FFmpeg 官网的文档页面](https://ffmpeg.org/documentation.html) 看到 Libraries Documentation 的时候，我差点都要激动得跳起来了。然而当我点开其中每一个主题，发现这些文档都只有三部分：Description, See Also 和 Authors，而且Authors 还是占比最多的那个。 除开这个毫无用处的 Libraries Docuoectation, 剩下的就是官方 wiki、一个第三方教程和一堆 Doxygen 文档了。[官方网站上附带的那个第三方教程](dragster.org/ffmpeg)最后更新于 2015 年，其中的很多写法已经被淘汰了；而 wiki 也给不了太多有用的信息。至于 Doxygen 文档 —— 见鬼去吧，谁会一入门就看这玩意。好在我借助搜索引擎找到了一份[还算新而且友好的教程](https://github.com/leandromoreira/ffmpeg-libav-tutorial) ,配合[官方的例子](https://ffmpeg.org/doxygen/trunk/examples.html) 勉强学会了基本操作。
+如果说 scikit-image 的文档是极其匿乏，那么FFmpeg简直就是意识流文档，说是皇帝的新文档也不过分。当我打开 [FFmpeg 官网的文档页面](https://ffmpeg.org/documentation.html) 看到 Libraries Documentation 的时候，我差点都要激动得跳起来了。然而当我点开其中每一个主题，发现这些文档都只有三部分：Description, See Also 和 Authors，而且Authors 还是占比最多的那个。 除开这个毫无用处的 Libraries Docuoectation, 剩下的就是官方 wiki、一个第三方教程和一堆 Doxygen 文档了。[官方网站上附带的那个第三方教程](dragster.org/ffmpeg)最后更新于 2015 年，其中的很多写法已经被淘汰了；而 wiki 也给不了太多有用的信息。至于 Doxygen 文档 —— 见鬼去吧，谁会一入门就看这玩意。好在我借助搜索引擎找到了一份[还算新而且友好的教程](https://github.com/leandromoreira/ffmpeg-libav-tutorial) ,配合[官方的例子](https://ffmpeg.org/doxygen/trunk/examples.html) 勉强学会了基本操作。
 
 ## 2. 我的头呢？
 
