@@ -26,7 +26,7 @@ const headerBar = `
 </div>
 <hr />`
 
-const formatIndexPage = blogList => {
+const generateIndexPage = blogList => {
    const renderedBlogList = blogList.map(blog => `
       <div class="blog">
          <a href="/js-free/blog/${blog.timestamp}-${blog.ident}.html">${blog.title}</a>
@@ -59,12 +59,8 @@ const formatIndexPage = blogList => {
 </html>`
 }
 
-fs.writeFileSync(`${targetDir}/index.html`, formatIndexPage(liberalList))
-fs.writeFileSync(`${targetDir}/index-tech.html`, formatIndexPage(techList))
-
-const formatBlogPage = blog => {
-   return
-}
+fs.writeFileSync(`${targetDir}/index.html`, generateIndexPage(liberalList))
+fs.writeFileSync(`${targetDir}/index-tech.html`, generateIndexPage(techList))
 
 const generateBlogPage = meta => {
    const blog = JSON.parse(fs.readFileSync(
@@ -83,6 +79,10 @@ const generateBlogPage = meta => {
          
          .blog > h1 {
             text-align: center;
+         }
+
+         h3 {
+            text-align: center;         
          }
       </style>
    </head>
@@ -139,8 +139,8 @@ fs.writeFileSync(`${targetDir}/about.html`, `<!DOCTYPE html>
       <div class="about">
          <div class="about-inner">
             <h1>${config.blog.name}</h1>
-            <br />
             <img src="/${config.blog.avatar}" alt="avatar" />
+            <br />
             <br />
             <div class="contacts">${contacts.join('<br />\n')}</div>
             <br />

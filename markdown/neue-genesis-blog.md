@@ -12,7 +12,7 @@
 按照原先的计划，这个 BLOG 还是要用 React 或者 Vue 这样的常规 SPA 技术来实现。不巧我吐槽选择困难的时候有人给我来了这么一句：
 
 <div class="img-container">
-<img src="extra/blog-images/flaribbit-suggest-vanilla.png" alt="这个人建议我用香草" width="445" height="358"/>
+<img src="/extra/blog-images/flaribbit-suggest-vanilla.png" alt="这个人建议我用香草" width="445" height="358"/>
 </div>
 
 这让我突然意识到，其实我对于 Reactive Pattern 的需求并不是那么大，我要做的只是：
@@ -185,5 +185,5 @@ $('body').appendChild(<App />)
 最后的结果就是我做出了这么一个非常小小小小小的 Blog，看到这个打包尺寸我终于舒服了。
 
 <div class="img-container">
-<img src="extra/blog-images/show-off-packed-size.png" alt="不炫耀一下这个打包尺寸真的太难受了呀" width="342" height="114"/>
+<img src="/extra/blog-images/show-off-packed-size.png" alt="不炫耀一下这个打包尺寸真的太难受了呀" width="342" height="114"/>
 </div>

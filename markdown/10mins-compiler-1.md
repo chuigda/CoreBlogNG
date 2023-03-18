@@ -36,7 +36,7 @@
 这个表达式，编译器可能生成像这样的一棵语法树：
 
 <div class="img-container">
-<img src="extra/blog-images/ast.png" alt="语法树" width="604" height="369"/>
+<img src="/extra/blog-images/ast.png" alt="语法树" width="604" height="369"/>
 </div>
 
 如果写成 JavaScript 对象，那么就会是：
@@ -316,9 +316,9 @@ console.log(JSON.stringify(parse_expr({ idx: 0 }, lex_analysis(
 
 ## 结语
 
-把上面那堆东西组装起来，你就获得了一个最基本的编译器（或者解释器）。你可以在 [这里](extra/code/10mins-compiler/10mins-compiler-compat.js) 找到完整的代码 （[网页演示版本](extra/code/10mins-compiler/10mins-compiler-online.html)）。
+把上面那堆东西组装起来，你就获得了一个最基本的编译器（或者解释器）。你可以在 [这里](/extra/code/10mins-compiler/10mins-compiler-compat.js) 找到完整的代码 （[网页演示版本](/extra/code/10mins-compiler/10mins-compiler-online.html)）。
 
-*[这个](extra/code/10mins-compiler/10mins-compiler.js) 是原先使用现代一些的 JavaScript 编写的版本。*
+*[这个](/extra/code/10mins-compiler/10mins-compiler.js) 是原先使用现代一些的 JavaScript 编写的版本。*
 
 千里冰封曾经说过，“编译器入门是一个非常主观的东西，你觉得自己会了就是会了”。受篇幅所限，本文显然无法包揽编译技术的方方面面，但它应该能够给你提供足够帮你入门的知识，并且给予你进一步学习编译技术的自信。
 
