@@ -42,7 +42,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Build JS-free pages
-        npm: npm run build-jsfree
+        run: npm run build-jsfree
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
