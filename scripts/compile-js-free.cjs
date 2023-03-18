@@ -127,11 +127,10 @@ fs.writeFileSync(`${targetDir}/about.html`, `<!DOCTYPE html>
          .contacts {
             text-align: left;
          }
-          
+
          img {
-             border: 1px solid black;
-             width: 200px;
-             height: 200px
+            width: 160px;
+            height: 160px;
          }
       </style>
    </head>
