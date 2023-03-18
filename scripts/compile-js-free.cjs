@@ -10,7 +10,7 @@ const techList = JSON.parse(fs.readFileSync(`${dataDir}/list/tech`, { encoding: 
 
 // language=CSS
 const commonStyle = `body {
-    max-width: 800px;
+   max-width: 800px;
    margin: 10px auto 0;
    padding-left: 4px;
    padding-right: 4px;
@@ -18,10 +18,10 @@ const commonStyle = `body {
 
 const headerBar = `
 <div class="header-bar">
-    <a href="/js-free/index.html">随想</a>
-    <a href="/js-free/index-tech.html">技术</a>
-    <a href="/js-free/about.html">关于</a>
-    <a href="/js-free/link.html">友链</a>
+    <a href="/js-free/index.html">随想</a> &nbsp;&nbsp;
+    <a href="/js-free/index-tech.html">技术</a> &nbsp;&nbsp;
+    <a href="/js-free/about.html">关于</a> &nbsp;&nbsp;
+    <a href="/js-free/link.html">友链</a> &nbsp;&nbsp;
     <a href="/">返回普通版本</a>
 </div>
 <hr />`
