@@ -44,6 +44,9 @@ const App = () => {
    )
 }
 
-$('body').appendChild(<App />)
+const body = $('body')
+
+body.innerHTML = ''
+body.appendChild(<App />)
 
 wgc0310()

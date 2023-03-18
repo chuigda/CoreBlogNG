@@ -1,6 +1,6 @@
 import { h } from 'tsx-dom'
 
-import config from '../config'
+import config from '../config.json'
 import './blog-read.css'
 import dayjs from "dayjs";
 

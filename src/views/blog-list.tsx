@@ -1,7 +1,7 @@
 import { h } from 'tsx-dom'
 import dayjs from 'dayjs'
 
-import config from '../config'
+import config from '../config.json'
 import './blog-list.css'
 
 const { api: { base } } = config

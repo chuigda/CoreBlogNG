@@ -1,0 +1,15 @@
+{
+   "blog": {
+      "name": "CoreBlogNG",
+      "description": "爱我所选之路，此路风月常新。",
+      "avatar": "public/avatar.png",
+      "links": [
+         { "icon": "\ue887", "title": "QQ", "text": "2571851049" },
+         { "icon": "\ue63a", "title": "GitHub", "text": "Chuigda WhiteGive", "link": "https://github.com/chuigda" },
+         { "icon": "\ue504", "title": "Bilibili", "text": "WGC0310", "link": "https://space.bilibili.com/168769512" }
+      ]
+   },
+   "api": {
+      "base": "data"
+   }
+}
