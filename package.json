@@ -7,7 +7,7 @@
     "dev": "vite",
     "generate": "node scripts/compile.cjs ./markdown ./data",
     "cleanup": "rm -rf data && mkdir -p data/blog && mkdir -p data/list",
-    "build": "tsc && vite build && cp -r public dist/ && cp -r data dist/data && cp -r extra dist/ && cp src/extra/project-wg-lite.mjs dist/extra/ && cp robots.txt dist/",
+    "build": "tsc && vite build && cp -r public dist/ && cp -r data dist/data && cp -r extra dist/ && cp src/extra/project-wg-lite.mjs dist/extra/ && cp robots.txt dist/ && cp project-y2.html dist/",
     "build-jsfree": "mkdir -p dist/js-free && mkdir -p dist/js-free/blog && node scripts/compile-js-free.cjs ./data ./dist/js-free"
   },
   "devDependencies": {
