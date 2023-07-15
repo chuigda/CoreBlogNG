@@ -22,8 +22,8 @@ processData(data)
 ```
 
 这段代码里涉及了两种任务：
-- 从远程计算机获取数据的 `readData` 是一个 *IO 任务*，它并不消耗任何计算资源，只是在等待远程计算机的响应就绪。
-- 对数据进行处理的 `processData` 是一个*计算任务*，它消耗本地计算机的 CPU 资源。
+- 从远程计算机获取数据的 `readData` 是一个 **IO 任务**，它并不消耗任何计算资源，只是在等待远程计算机的响应就绪。
+- 对数据进行处理的 `processData` 是一个**计算任务**，它消耗本地计算机的 CPU 资源。
 
 在上述代码中，当程序执行到 `readData` 时，如果远程计算机没有响应，那么程序就要停下来等待。对于一个**阻塞式**的
 API 来说，它会让线程挂起，将控制权交还给操作系统，让操作系统调度另一个可以执行的线程。 直到数据到来时，
@@ -123,7 +123,7 @@ while (true) {
 
 ## 回调式 API
 
-早期 JavaScript 使用回调式的 API，例如:
+上面的那个 big while （或称**事件循环**）虽然高效，但毫无疑问它把所有 IO 操作集中在了一起，这就非常地*反封装*。解决这个问题的方式原始之一就是使用回调式 API 对其进行一些封装:
 
 ```javascript
 readData(connection, function (data) {
@@ -177,11 +177,16 @@ readData1(connection, function (data) {
 简单来说，协程就是另一种对 “big while” 的封装方式。有了协程之后，就可以像原先使用同步 API 一样，写出简洁的代码:
 
 ```javascript
-data = await readDataAsync(connection)
-processData(data)
+while (true) {
+  connection = acceptConnection()
+  launchTask(async function () {
+    data = await readData(connection)
+    processData(data)
+  })
+}
 ```
 
 与原先阻塞式的 `readData` 相比，这里的 `readDataAsync` 并不会阻塞线程，而只是将当前的协程暂停，
 控制权会被移交给程序内部的协程调度器，而无须劳烦操作系统。
 
-协程具体的实现总体上和回调式的 API 的实现有异曲同工之妙。*今天先写到这吧，累死我了， 下次再讲 stackful 和 stackless，multithread runtime 和 work stealing，咕咕咕。*
+协程的具体实现总体上和回调式的 API 的实现有异曲同工之妙。*今天先写到这吧，累死我了， 下次再讲 stackful 和 stackless，multithread runtime 和 work stealing，咕咕咕。*
