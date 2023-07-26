@@ -12,7 +12,9 @@ const BlogList = ({ liberal }) => {
       const blogs = await $().get(`${base}/list/${liberal ? 'liberal' : 'tech'}`)
       const blogList = $('#blog-list')
       // @ts-ignore
-      blogs.forEach(({ title, brief, time, timestamp, ident, author }) => {
+      blogs.forEach(({ title, brief, time, timestamp, ident, author, hidden }) => {
+         if (hidden) return
+
          blogList.appendChild(
             <div class="blog-item">
                <h2>

@@ -27,7 +27,7 @@ const headerBar = `
 <hr />`
 
 const generateIndexPage = blogList => {
-   const renderedBlogList = blogList.map(blog => `
+   const renderedBlogList = blogList.map(blog => blog.hidden ? '' : `
       <div class="blog">
          <a href="/js-free/blog/${blog.timestamp}-${blog.ident}.html">${blog.title}</a>
          <hr />
