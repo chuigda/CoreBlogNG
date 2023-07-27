@@ -1,77 +1,32 @@
 module Softpipe
 
-using Base.Threads
-using Distributed
+# CG 中的线性代数运算经常需要一些定长的向量和矩阵
 using StaticArrays
+# 由 MWORKS.Syslab 2023b 提供，仅用于最后阶段显示图片，你也可以替换成其他库
 using TyImages
 
+# 常用尺寸的向量
+# CG 渲染不需要太高的精度，并且 32 位浮点数的使用非常广泛
+# 而且这样我们可以少担心一点类型稳定性的问题
 const Vec2 = SVector{2,Float32}
 const Vec3 = SVector{3,Float32}
 const Vec4 = SVector{4,Float32}
+
+# 常用的 4x4 矩阵
 const Mat4x4 = SMatrix{4,4,Float32}
 
-function rotate_x(angle::Number)::Mat4x4
-    return Mat4x4(
-        1.0, 0.0, 0.0, 0.0,
-        0.0, cosd(angle), sind(angle), 0.0,
-        0.0, -sind(angle), cosd(angle), 0.0,
-        0.0, 0.0, 0.0, 1.0
-    )
-end
-
-function rotate_y(angle::Number)::Mat4x4
-    return Mat4x4(
-        cosd(angle), 0.0, -sind(angle), 0.0,
-        0.0, 1.0, 0.0, 0.0,
-        sind(angle), 0.0, cosd(angle), 0.0,
-        0.0, 0.0, 0.0, 1.0
-    )
-end
-
-function rotate_z(angle::Number)::Mat4x4
-    return Mat4x4(
-        cosd(angle), sind(angle), 0.0, 0.0,
-        -sind(angle), cosd(angle), 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0,
-        0.0, 0.0, 0.0, 1.0
-    )
-end
-
-function translate(x::Number, y::Number, z::Number)::Mat4x4
-    return Mat4x4(
-        1.0, 0.0, 0.0, 0.0,
-        0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0,
-        x, y, z, 1.0
-    )
-end
-
-function scale(x::Number, y::Number, z::Number)::Mat4x4
-    return Mat4x4(
-        x, 0.0, 0.0, 0.0,
-        0.0, y, 0.0, 0.0,
-        0.0, 0.0, z, 0.0,
-        0.0, 0.0, 0.0, 1.0
-    )
-end
-
-function perspective(fovy::Number, aspect::Number, near::Number, far::Number)::Mat4x4
-    f = cotd(fovy / 2.0)
-    return Mat4x4(
-        f / aspect, 0.0, 0.0, 0.0,
-        0.0, f, 0.0, 0.0,
-        0.0, 0.0, (far + near) / (near - far), -1.0,
-        0.0, 0.0, (2.0 * far * near) / (near - far), 0.0
-    )
-end
-
+# 帧缓冲，记录每个像素点上的颜色
 const Framebuffer = Matrix{Vec4}
+# 深度缓冲，记录每个像素点上的深度值
+const Depthbuffer = Matrix{Float32}
 
-const DepthBuffer = Matrix{Float32}
-
-# 此算法取自 https://codeplea.com/triangular-interpolation
-# 这是我能找到的对重心坐标插值最简单的解释
-function barycentric(v1::V, v2::V, v3::V, v::V)::Tuple{Float32,Float32,Float32} where {V<:AbstractVector{Float32}}
+# 重心坐标计算
+function barycentric(
+    v1::V,
+    v2::V,
+    v3::V,
+    v::Vec2
+)::Tuple{Float32,Float32,Float32} where {V<:AbstractVector}
     denom = (v2[2] - v3[2]) * (v1[1] - v3[1]) + (v3[1] - v2[1]) * (v1[2] - v3[2])
 
     w1 = ((v2[2] - v3[2]) * (v[1] - v3[1]) + (v3[1] - v2[1]) * (v[2] - v3[2])) / denom
@@ -81,27 +36,23 @@ function barycentric(v1::V, v2::V, v3::V, v::V)::Tuple{Float32,Float32,Float32} 
     return (w1, w2, w3)
 end
 
-function interpolate3(p::Vec4, v1::T, v2::T, v3::T)::Union{T,Nothing} where {T}
+# 基于重心坐标的插值
+function interpolate3(p::Vec2, v1::T, v2::T, v3::T)::Union{T,Nothing} where {T}
+    # 这里用了一些 Julia 的反射机制，不用在意
     @assert hasfield(T, :position)
     @assert isa(v1.position, Vec4)
 
-    p_xy = p[1:2]
     v1_xy = v1.position[1:2]
     v2_xy = v2.position[1:2]
     v3_xy = v3.position[1:2]
 
-    w1, w2, w3 = barycentric(v1_xy, v2_xy, v3_xy, p_xy)
+    w1, w2, w3 = barycentric(v1_xy, v2_xy, v3_xy, p)
     if w1 < 0.0 || w2 < 0.0 || w3 < 0.0
         return nothing
     end
 
     ret = T()
-    setfield!(ret, :position, p)
     for field in fieldnames(T)
-        if field == :position
-            continue
-        end
-
         v1_field = getfield(v1, field)
         v2_field = getfield(v2, field)
         v3_field = getfield(v3, field)
@@ -110,108 +61,131 @@ function interpolate3(p::Vec4, v1::T, v2::T, v3::T)::Union{T,Nothing} where {T}
     return ret
 end
 
-function render(
-    width,
-    height,
-    depth_test::Bool,
-    clear_color::Vec4,
-    vertices::V,
+function render!(
+    # 目标帧缓冲，或者可以理解为“画布”
+    framebuffer::Framebuffer,
+    # 顶点数据。注意定点数据不止包含位置，还可以包含用户定义的任意属性
+    # 所以这里使用一个泛型参数来表示顶点类型
+    vertices::Vector{V},
+    # 顶点着色器
     vertex_shader::VS,
-    fragment_shader::FS,
-)::Framebuffer where {V, VS <: Function, FS <: Function}
+    # 片段着色器
+    fragment_shader::FS
+) where {V,VS<:Function,FS<:Function}
+    width = size(framebuffer, 2)
+    height = size(framebuffer, 1)
+    vertex_count = length(vertices)
+
+    # 做一些基本的检查
     @assert width > 0 && height > 0
-    @assert length(vertices) % 3 == 0
+    @assert vertex_count > 0
+    # 本文中我们只讨论三角形
+    # 多边形可以视为多个三角形的组合，线段则使用另外的算法，本文暂不讨论
+    @assert vertex_count % 3 == 0
 
-    # fill framebuffer with clear color
-    framebuffer = fill(clear_color, (height, width))
-    depthbuffer::Union{DepthBuffer,Nothing} = nothing
-    if depth_test
-        depthbuffer = fill(floatmax(Float32), (height, width))
+    vs_outputs = map(vertex_shader, vertices)
+    # 在这之后，“正规化”着色器输出的顶点位置。不用太在意数学上发生了什么
+    for i in 1:vertex_count
+        vs_outputs[i].position /= vs_outputs[i].position.w
     end
 
-    vs_outputs = pmap(vertex_shader, vertices)
-    @threads for vs_output in vs_outputs
-        t = vs_output.position[4]
-        vs_output.position = vs_output.position / t
-    end
-
-    for i in 1:3:length(vs_outputs)
+    for i in 1:3:vertex_count
+        # 三角形的三个顶点
         v1 = vs_outputs[i]
         v2 = vs_outputs[i+1]
         v3 = vs_outputs[i+2]
 
+        # 三个顶点的位置
         v1_pos = v1.position::Vec4
         v2_pos = v2.position::Vec4
         v3_pos = v3.position::Vec4
-    
-        # calculate bounding box
+
+        # 计算三角形的包围盒
         min_x = min(v1_pos[1], v2_pos[1], v3_pos[1])
-        max_x = max(v1_pos[1], v2_pos[1], v3_pos[1])
         min_y = min(v1_pos[2], v2_pos[2], v3_pos[2])
+        max_x = max(v1_pos[1], v2_pos[1], v3_pos[1])
         max_y = max(v1_pos[2], v2_pos[2], v3_pos[2])
-    
-        # convert to pixel coordinate
-        min_x_pixel = round(Int, (min_x + 1.0) * width / 2.0)::Int
-        max_x_pixel = round(Int, (max_x + 1.0) * width / 2.0)::Int
-        min_y_pixel = round(Int, (min_y + 1.0) * height / 2.0)::Int
-        max_y_pixel = round(Int, (max_y + 1.0) * height / 2.0)::Int
-    
-        # ensure the bounding box is inside the framebuffer
-        min_x_pixel = max(min_x_pixel, 1)
-        max_x_pixel = min(max_x_pixel, width)
-        min_y_pixel = max(min_y_pixel, 1)
-        max_y_pixel = min(max_y_pixel, height)
-    
-        # rasterization
-        for y_pixel in min_y_pixel:max_y_pixel
-            @threads for x_pixel in min_x_pixel:max_x_pixel
-                x = 2.0 * x_pixel / width - 1.0
-                y = 2.0 * y_pixel / height - 1.0
-                p = Vec4(x, y, 0.0, 1.0)
-    
-                # interpolate
-                v = interpolate3(p, v1, v2, v3)
-                if v === nothing
+
+        # 将包围盒的坐标转换为帧缓冲上像素的坐标
+        min_x_pix = round(Int, (min_x + 1.0) * width / 2.0)
+        min_y_pix = round(Int, (min_y + 1.0) * height / 2.0)
+        max_x_pix = round(Int, (max_x + 1.0) * width / 2.0)
+        max_y_pix = round(Int, (max_y + 1.0) * height / 2.0)
+
+        # 确保包围盒在帧缓冲内
+        min_x_pix = max(min_x_pix, 1)
+        min_y_pix = max(min_y_pix, 1)
+        max_x_pix = min(max_x_pix, width)
+        max_y_pix = min(max_y_pix, height)
+
+        # 对包围盒内的每个像素点进行处理
+        for y_pix in min_y_pix:max_y_pix
+            for x_pix in min_x_pix:max_x_pix
+                x = 2.0 * x_pix / width - 1.0
+                y = 2.0 * y_pix / height - 1.0
+
+                # 通过重心坐标插值得到这个像素点的属性
+                fragment = interpolate3(Vec2(x, y), v1, v2, v3)
+
+                # 如果这个像素点不在三角形内，就跳过
+                if isnothing(fragment)
                     continue
                 end
-    
-                # depth test
-                if depth_test
-                    if v.position[3] > depthbuffer[y_pixel, x_pixel]
-                        continue
-                    end
-                    depthbuffer[y_pixel, x_pixel] = v.position[3]
-                end
-    
-                # fragment shader
-                color = fragment_shader(v)
-    
-                # write to framebuffer
-                framebuffer[y_pixel, x_pixel] = color
+
+                # 运行片元着色器，得到这个像素点的颜色
+                color = fragment_shader(fragment)
+                # 将颜色写入帧缓冲
+                framebuffer[y_pix, x_pix] = color
             end
         end
     end
-
-    return framebuffer
 end
 
-mutable struct Vertex
-    position::Vec4
-    color::Vec4
-
-    Vertex() = new()
-    Vertex(position::Vec4, color::Vec4) = new(position, color)
+# 三角形顶点的属性
+struct Vertex
+    # 位置，我们暂时只用到 x 和 y，所以两个分量就够了
+    position::Vec2
+    # 颜色，我们暂时不用透明度，所以三个分量就够了
+    color::Vec3
 end
 
-function vertex_shader(vertex::Vertex)::Vertex
-    return vertex
+# 我们采用和 OpenGL 相同的坐标系，即 y 轴向上，z 轴向屏幕外
+vertices = [
+    Vertex(Vec2(-1.0, -1.0), Vec3(1.0, 0.0, 0.0)),
+    Vertex(Vec2(1.0, -1.0), Vec3(0.0, 1.0, 0.0)),
+    Vertex(Vec2(0.0, 1.0), Vec3(0.0, 0.0, 1.0))
+]
+
+mutable struct ManipulatedVertex
+    position::Vec4 # 我们统一输出 Vec4，这样后续步骤会更统一
+    color::Vec3    # 顶点颜色
+
+    ManipulatedVertex() = new()
+    ManipulatedVertex(position::Vec4, color::Vec3) = new(position, color)
 end
 
-function fragment_shader(vertex::Vertex)::Vec4
-    return vertex.color
+function vertex_shader_identity(vertex::Vertex)::ManipulatedVertex
+    ManipulatedVertex(
+        # 顶点位置不变，补上 z 和 t 分量
+        Vec4(vertex.position[1], vertex.position[2], 0.0, 1.0),
+        # 顶点颜色不变
+        vertex.color
+    )
 end
 
-function packed2planar(packed::Matrix{Vec4})::Array{Float32,3}
+function fragment_shader_identity(fragment::ManipulatedVertex)::Vec4
+    return Vec4(
+        fragment.color[1],
+        fragment.color[2],
+        fragment.color[3],
+        1.0
+    )
+end
+
+framebuffer = zeros(Vec4, 512, 512)
+render!(framebuffer, vertices, vertex_shader_identity, fragment_shader_identity)
+
+function packed2planar(packed::Framebuffer)::Array{Float32,3}
     ret = Array{Float32}(undef, size(packed, 1), size(packed, 2), 3)
 
     height = size(packed, 1)
@@ -228,43 +202,6 @@ function packed2planar(packed::Matrix{Vec4})::Array{Float32,3}
     return ret
 end
 
-function test()
-    fb = render(
-        600,
-        600,
-        true,
-        Vec4(0.0, 0.0, 0.0, 1.0),
-        [
-            Vertex(Vec4(-1.0, -1.0, 0.0, 1.0), Vec4(1.0, 0.0, 0.0, 1.0)),
-            Vertex(Vec4(1.0, -1.0, 0.0, 1.0), Vec4(0.0, 1.0, 0.0, 1.0)),
-            Vertex(Vec4(0.0, 1.0, 0.0, 1.0), Vec4(0.0, 0.0, 1.0, 1.0)),
-        ],
-        vertex_shader,
-        fragment_shader,
-    )
-
-    imshow(packed2planar(fb))
-end
-
-using BenchmarkTools
-using InteractiveUtils
-
-function bench()
-    @btime render(
-        600,
-        600,
-        true,
-        Vec4(0.0, 0.0, 0.0, 1.0),
-        [
-            Vertex(Vec4(-1.0, -1.0, 0.0, 1.0), Vec4(1.0, 0.0, 0.0, 1.0)),
-            Vertex(Vec4(1.0, -1.0, 0.0, 1.0), Vec4(0.0, 1.0, 0.0, 1.0)),
-            Vertex(Vec4(0.0, 1.0, 0.0, 1.0), Vec4(0.0, 0.0, 1.0, 1.0)),
-        ],
-        vertex_shader,
-        fragment_shader,
-    )
-end
+imshow(packed2planar(framebuffer))
 
 end # module Softpipe
-
-Softpipe.test()
