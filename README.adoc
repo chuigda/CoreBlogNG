@@ -3,7 +3,7 @@ Author: Chuigda WhiteGive
 
 link:https://self.icey.tech/[新世纪锤哥博客] 的源代码。
 
-Source code of link:https://self.icey.tech/[Neue Genesis Chuigda Blog]。
+Source code of link:https://self.icey.tech/[Neue Genesis Chuigda Blog].
 
 == ⚠️⚠️⚠️ 警告：包含申必技术 ⚠️⚠️⚠️
 [quote]
