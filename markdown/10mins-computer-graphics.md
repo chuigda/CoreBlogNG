@@ -382,6 +382,6 @@ imshow(packed2planar(framebuffer))
 
 ## 总结
 
-大功告成！你现在应该已经看到了一个彩色三角形了。如果你在哪一步遇到了问题，可以参考[完整代码](/extra/code/10mins-computer-graphics/10mins-computer-graphics.jl)。
+大功告成！你现在应该已经看到了一个彩色三角形了。如果你在哪一步遇到了问题，可以参考 [完整代码](/extra/code/10mins-computer-graphics/10mins-computer-graphics.jl)。
 
 到目前为止，我们已经实现了一个基本的软件渲染器，但还有很多事情没有做。例如，我们还没有实现深度测试，也没有利用我们的可编程功能做一些更有趣的事情。但是，我们已经完成了本文的目标：概览整个渲染管线，介绍计算机图形学的基本概念。*敬请期待之后的更多作品，咕咕咕，咕咕咕咕咕咕。*
