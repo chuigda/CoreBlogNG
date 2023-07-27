@@ -3,8 +3,16 @@ Author: Chuigda WhiteGive
 
 link:https://self.icey.tech/[新世纪锤哥博客] 的源代码。
 
+Source code of link:https://self.icey.tech/[Neue Genesis Chuigda Blog]。
+
 == ⚠️⚠️⚠️ 警告：包含申必技术 ⚠️⚠️⚠️
 [quote]
 ____
 这个 Blog 的实现方式很申必，各种花里胡哨的东西都有一点，而做成这样基本只是出于个人偏好。这个 Blog 可能完全不适合任何人类使用，也不要尝试读代码学到什么东西 —— 只会学到很多很坏的 practice 而已。
+____
+
+== ⚠️⚠️⚠️ Warning: weird techstack ⚠️⚠️⚠️
+[quote]
+____
+This blog was implemented in a quite weird way using many fancy but strange things, just because I subjectively want to mess it up. This blog is not suitable for anybody to "use". Also don't try learning anything via reading source code: you'll only learn many bad practises.
 ____
