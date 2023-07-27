@@ -67,7 +67,7 @@ const Depthbuffer = Matrix{Float32}
 function render!(
     # 目标帧缓冲，或者可以理解为“画布”
     framebuffer::Framebuffer,
-    # 顶点数据。注意定点数据不止包含位置，还可以包含用户定义的任意属性
+    # 顶点数据。注意顶点数据不止包含位置，还可以包含用户定义的任意属性
     # 所以这里使用一个泛型参数来表示顶点类型
     vertices::Vector{V}
 
