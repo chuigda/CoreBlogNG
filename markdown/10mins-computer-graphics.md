@@ -1,5 +1,5 @@
 !!meta-define:ident:10-minutes-computer-graphics
-!!meta-define:title:十分钟计算机图形学
+!!meta-define:title:十分钟计算机图形学 I - 光栅化
 !!meta-define:author:Chuigda WhiteGive
 !!meta-define:time:2023-07-26T22:30:15+08:00
 !!meta-define:tags:图形学,软件渲染器,Julia
