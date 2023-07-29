@@ -43,7 +43,7 @@
 - 需要循环的次数非常多，比如说，要填充一个包围盒为 1920x1080 的三角形，我们需要循环 2073600 次；
 - 每次循环需要的数据非常少，比如我们上一章用到的两个着色器就只用到了顶点的坐标和颜色
 - 每次循环执行的任务规模有限
-- 两次循环之间没有什么依赖关系，可以*各算各的*，也就是说，**我们可以*并行*地进行这些循环**
+- 两次循环之间没有什么依赖关系，可以*各算各的*，也就是说，**我们可以并行地进行这些循环**
 
 而 CPU 是为*少量*的*大型*任务设计的，虽然 CPU 也可以利用多线程和 `SIMD` 等方式来加速处理，但面对浩如烟海的像素数量，CPU 也力不从心。这也就催生了专用的**图形处理器**，也就是 **GPU**。
 
@@ -86,7 +86,7 @@ glEnd();
 
 ### 顶点数组
 
-要一次性提交尽量多的数据，最容易想到的东西就是使用*数组*。OpenGL 首先引入的东西就是*顶点数组（vertex array）*：
+要一次性提交尽量多的数据，最容易想到的方式就是使用数组。OpenGL 首先引入的东西就是**顶点数组（vertex array）**：
 
 ```c
 float positionArray[] = {
@@ -101,7 +101,9 @@ float colorArray = {
     0.0f, 0.0f, 1.0f
 };
 
+// glVertex“2f” 是一次上传 2 个 GLfloat，而 glVertex“Pointer” 就是一次性上传一个 GLfloat 数组
 glVertexPointer(2, GL_FLOAT, 0, positionArray);
+// glColor“Pointer” 同理
 glColorPointer(3, GL_FLOAT, 0, colorArray);
 
 glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -126,7 +128,7 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(positionArray), positionArray, GL_STATIC_DR
 
 // 绘制阶段
 glBindBuffer(GL_ARRAY_BUFFER, bufferId); // 选择要操作的缓冲区
-glVertexPointer(2, GL_FLOAT, 0, 0); // 0 表示从缓冲区的起始位置开始
+glVertexPointer(2, GL_FLOAT, 0, 0); // 给原先传指针的参数传 0 （空指针），表示从缓冲区中读取数据
 glDrawArrays(GL_TRIANGLES, 0, 3); // 直接调用之前存储在 GPU 上的数据进行绘制
 ```
 
@@ -205,7 +207,7 @@ glUniformMatrix4fv(modelViewLoc, 100, GL_FALSE, modelViewMatrices);
 
 ### 帧缓冲对象和渲染到纹理
 
-有的时候，我们需要动态地生成一些纹理，然后再将这些纹理用于渲染。在 OpenGL 3.0 之前，我们需要在 OpenGL 把内容输出之后，从帧缓冲区中读取数据，然后再作为上传到 GPU 上；要么干脆使用软件渲染。这样的操作非常低效，因为我们需要在 CPU 和 GPU 之间来回传输数据。而帧缓冲对象（Frame Buffer Object, FBO）则可以让我们在 GPU 上直接生成纹理，这种方式称为**渲染到纹理（Render To Texture）**：
+有的时候，我们需要动态地生成一些纹理，然后再将这些纹理用于渲染。在 OpenGL 3.0 之前，我们需要在 OpenGL 把内容输出之后，从帧缓冲区中读取数据，然后再作为纹理上传给 GPU。这样做非常低效，因为我们需要在 CPU 和 GPU 之间来回传输数据。而帧缓冲对象（Frame Buffer Object, FBO）则可以让我们在 GPU 上直接生成纹理，“本地生产，本地消费”，这种方式称为**渲染到纹理（Render To Texture）**：
 
 ```c
 // 初始化阶段
