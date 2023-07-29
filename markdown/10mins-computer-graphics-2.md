@@ -130,6 +130,8 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(positionArray), positionArray, GL_STATIC_DR
 glBindBuffer(GL_ARRAY_BUFFER, bufferId); // 选择要操作的缓冲区
 glVertexPointer(2, GL_FLOAT, 0, 0); // 给原先传指针的参数传 0 （空指针），表示从缓冲区中读取数据
 glDrawArrays(GL_TRIANGLES, 0, 3); // 直接调用之前存储在 GPU 上的数据进行绘制
+
+// 在可编程管线中，使用 glVertexAttribPointer 代替 glVertexPointer，其他类似
 ```
 
 ### 顶点数组对象
