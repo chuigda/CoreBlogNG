@@ -1,7 +1,7 @@
 !!meta-define:ident:teng-wang-ge-xu
 !!meta-define:title:滕王阁序
 !!meta-define:author:王勃
-!!meta-define:time:675-09-09T12:00:00+08:00
+!!meta-define:time:0675-09-09T12:00:00+08:00
 !!meta-define:liberal:true
 !!meta-define:tags:古文
 !!meta-define:brief:老当益壮，宁移白首之心？穷且益坚，不坠青云之志。
