@@ -53,6 +53,14 @@ AES_init_ctx(&ctx, "Zdravstvuyte,mir");
 此外，对于一些简单结构，也可以直接把操纵结构体成员的权限交给用户：
 
 ```c
+// 某专有软件
+typedef struct {
+    size_t size;
+    uint8_t *data;
+} SizedBuffer;
+```
+
+```c
 // QuickJS
 typedef union JSValueUnion {
     int32_t int32;
@@ -92,6 +100,148 @@ static js_force_inline JSValue JS_NewBool(JSContext *ctx, JS_BOOL val)
 
 ## extern "C"
 
-作为计算机科学的基石，跨语言调用领域的事实标准，C 语言编写的代码通常都会被其他语言调用。
+作为计算机科学的基石，跨语言调用领域的事实标准，C 语言编写的代码通常都会被其他语言调用。最常见的情形之一是，C++ 会直接引入 C 的头文件，然后调用其中的函数。这时，C 语言的 API 就需要使用 `extern "C"` 来声明：
 
-> 未完待续，咕咕咕
+```c
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// ...
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+```
+
+这是因为 C 和 C++ 使用不同的调用协定，例如 C++ 的函数调用会在编译时进行*名称修饰*，而 C 的函数调用则不会。如果不明确告诉编译器“这些是 C 函数”，编译器就会按照 C++ 的调用协定去调用这些函数，引起各种各样的问题。
+
+## FFI
+
+除了 C++，其他语言也可以通过*外部函数接口*（Foreign Function Interface，FFI）来调用 C 语言的函数，这些 FFI 方式基本都是 `dlfcn` 的套壳，以 Julia 为例：
+
+```julia
+using Libdl: dlopen, dlsym, dlclose
+
+lib = dlopen("libfoo.so", RTLD_NOW)
+foo = dlsym(lib, "foo")
+
+@ccall $foo()::Cvoid
+
+dlclose(lib)
+```
+
+其实就是
+
+```c
+#include <dlfcn.h>
+
+void *lib = dlopen("libfoo.so", RTLD_NOW);
+void (*foo)(void) = dlsym(lib, "foo");
+
+foo();
+
+dlclose(lib);
+```
+
+此时，我们之前的所有抉择都会对 FFI 调用产生影响：
+
+### 透明结构体 vs 不透明结构体
+
+不透明结构体可以很简单地在 FFI 调用中使用，只需要将结构体指针视为一个 `void*` 即可：
+
+```julia
+# 以 QuickJS JS_Runtime 为例
+const LPVOID = Ptr{Cvoid}
+js_runtime = @ccall $JS_NewRuntime()::LPVOID
+```
+
+而透明结构体就要麻烦一些 —— 调用方必须能构造出尺寸和布局完全一致的内存，用来存放结构体的成员：
+
+```julia
+struct SizedBuffer
+    size::Csize_t
+    data::Ptr{Cuint8}
+end
+```
+
+而有的时候，结构体的具体结构取决于库的实际构建配置，这就使得 FFI 调用方必须知道库的构建配置，才能构造出正确的结构体。这就使得库的使用变得复杂，而且容易出错。例如考虑 MbedTLS 中的 `mbedtls_rsa_context`：
+
+```c
+typedef struct mbedtls_rsa_context
+{
+    int MBEDTLS_PRIVATE(ver);                    
+    size_t MBEDTLS_PRIVATE(len);                 
+    mbedtls_mpi MBEDTLS_PRIVATE(N);              
+    mbedtls_mpi MBEDTLS_PRIVATE(E);              
+    mbedtls_mpi MBEDTLS_PRIVATE(D);              
+    mbedtls_mpi MBEDTLS_PRIVATE(P);              
+    mbedtls_mpi MBEDTLS_PRIVATE(Q);              
+    mbedtls_mpi MBEDTLS_PRIVATE(DP);             
+    mbedtls_mpi MBEDTLS_PRIVATE(DQ);             
+    mbedtls_mpi MBEDTLS_PRIVATE(QP);             
+    mbedtls_mpi MBEDTLS_PRIVATE(RN);             
+    mbedtls_mpi MBEDTLS_PRIVATE(RP);             
+    mbedtls_mpi MBEDTLS_PRIVATE(RQ);             
+    mbedtls_mpi MBEDTLS_PRIVATE(Vi);             
+    mbedtls_mpi MBEDTLS_PRIVATE(Vf);             
+    int MBEDTLS_PRIVATE(padding);                
+    int MBEDTLS_PRIVATE(hash_id);                
+#if defined(MBEDTLS_THREADING_C)
+    /* Invariant: the mutex is initialized iff ver != 0. */
+    mbedtls_threading_mutex_t MBEDTLS_PRIVATE(mutex);    
+#endif
+}
+mbedtls_rsa_context;
+```
+
+有一种投机取巧的办法来缓解这一问题：只要开一个足够大的 buffer，那么 `mbedtls_rsa_*` 调用就肯定不会越界，事实上 MbedTLS.jl 也确实是这么做的：
+
+```julia
+mutable struct RSA
+    data::Ptr{mbedtls_rsa_context}
+
+    function RSA(padding=MBEDTLS_RSA_PKCS_V21, hash_id=MD_MD5)
+        ctx = new()
+        ctx.data = Libc.malloc(1000) # 直接开一个足够大的 buffer
+        ccall((:mbedtls_rsa_init, libmbedcrypto), Cvoid,
+            (Ptr{Cvoid}, Cint, Cint),
+            ctx.data, padding, hash_id)
+        finalizer(ctx->begin
+            ccall((:mbedtls_rsa_free, libmbedcrypto), Cvoid, (Ptr{Cvoid},), ctx.data)
+            Libc.free(ctx.data)
+        end, ctx)
+        ctx
+    end
+end
+```
+
+### 普通函数 vs 内联函数/宏
+
+普通函数能直接被 `dlsym` 加载，而内联函数和宏则不能。这就使得内联函数和宏不能被 FFI 调用方直接使用。必要的情况下需要提供一个普通函数，用来包装内联函数或宏：
+
+```c
+// QuickJS
+static js_force_inline JSValue JS_NewBool(JSContext *ctx, JS_BOOL val)
+{
+    return JS_MKVAL(JS_TAG_BOOL, (val != 0));
+}
+
+JSValue JS_NewBool_wrapper(JSContext *ctx, JS_BOOL val)
+{
+    return JS_NewBool(ctx, val);
+}
+```
+
+或者，考虑到 JSValue 的内容是已知的，并且不太可能改变，我们也可以直接在 Julia 一侧实现 `JS_NewBool`：
+
+```julia
+struct JSValue
+    u::JSValueUnion
+    tag::Cint64
+end
+
+function JS_NewBool(ctx::Ptr{JSContext}, val::Cint)
+    # ...
+end
+```
