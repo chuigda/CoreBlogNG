@@ -98,6 +98,78 @@ static js_force_inline JSValue JS_NewBool(JSContext *ctx, JS_BOOL val)
 // ...
 ```
 
+## 多返回值
+
+C 语言本身并不支持多返回值，但可以通过指针参数来模拟多返回值：
+
+```c
+// Windows API
+BOOL GetMessage(
+    LPMSG lpMsg,
+    HWND  hWnd,
+    UINT  wMsgFilterMin,
+    UINT  wMsgFilterMax
+);
+```
+
+这里，`GetMessage` 返回了两个值 —— 一个通过返回的 `BOOL`，另一个通过输出参数 `lpMsg`：如果消息循环中有消息，那么 `GetMessage` 会将消息的内容写入 `lpMsg`，并返回 `TRUE`；否则，`GetMessage` 会返回 `FALSE`。
+
+## 错误处理
+
+对于不同的库，错误处理的方式也不尽相同。但总的来说，有以下方略可以遵循：
+
+对于返回指针的函数，失败时可以返回空指针：
+
+```c
+// POSIX
+void *dlopen(const char *filename, int flag);
+
+// Windows API
+HMODULE LoadLibraryA(LPCSTR lpszLibFileName);
+```
+
+类似地，对于返回文件描述符/某种句柄的函数，失败时可以返回对于该返回值类型而言无效的值：
+
+```c
+// POSIX
+int open(const char *pathname, int flags); // 返回文件描述符，失败时返回 -1
+
+// Windows API
+ATOM RegisterClassA(const WNDCLASSA *lpWndClass); // 返回 ATOM，失败时返回 0
+```
+
+其他情况下，可以让 API 返回一个错误代码：
+
+```c
+// POSIX
+int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
+                   void *(*start_routine) (void *), void *arg);
+
+// Windows API
+BOOL SetConsoleCursorPosition(HANDLE hConsoleOutput, COORD dwCursorPosition);
+```
+
+除了让每步操作返回某种错误代码之外，还可以提供一些“查询”函数，用来获取错误信息：
+
+```c
+// POSIX
+// 严格意义上来说 errno 不是函数，也不是常规的变量
+if (errno == EACCES) {
+    // ...
+}
+
+// Windows API
+if (GetLastError() == ERROR_ACCESS_DENIED) {
+    // ...
+}
+
+// OpenGL
+GLenum err = glGetError();
+if (err == GL_INVALID_ENUM) {
+    // ...
+}
+```
+
 ## extern "C"
 
 作为计算机科学的基石，跨语言调用领域的事实标准，C 语言编写的代码通常都会被其他语言调用。最常见的情形之一是，C++ 会直接引入 C 的头文件，然后调用其中的函数。这时，C 语言的 API 就需要使用 `extern "C"` 来声明：
