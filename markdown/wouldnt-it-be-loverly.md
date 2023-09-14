@@ -1,6 +1,6 @@
 !!meta-define:ident:wouldnt-it-be-loverly
 !!meta-define:title:Wouldn't It Be Loverly?
-!!meta-define:author:lan Jay Lerner
+!!meta-define:author:Alan Jay Lerner
 !!meta-define:time:1964-12-25T00:00:00+00:00
 !!meta-define:tags:歌词
 !!meta-define:liberal:true
