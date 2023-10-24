@@ -1,7 +1,7 @@
 !!meta-define:ident:the-tree-on-the-hill
 !!meta-define:title:山上的树
 !!meta-define:author:Friedrich Wilhelm Nietzsche
-!!meta-define:time:1883-01-21T00:00:00+00:00
+!!meta-define:time:1881-08-02T00:00:00+00:00
 !!meta-define:liberal:true
 !!meta-define:tags:哲学,尼采
 !!meta-define:brief:我以我的爱和希望请求你：千万不要舍弃你的爱和希望
